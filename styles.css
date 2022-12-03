@@ -1,0 +1,132 @@
+/* ====================================================================================================================================== */
+/* Google Fonts */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+/* ====================================================================================================================================== */
+/* General */
+
+*{
+    font-family: 'Open Sans', sans-serif;
+  
+    margin: 0;
+    padding: 0;
+}
+   
+:root{
+    --primary-color: #3693d6;
+    --secondary-color: #928f8f;
+
+    --navigation-height: 10vh;
+}
+
+body{
+    position: relative;
+    min-height: 100vh;
+}
+
+/* ====================================================================================================================================== */
+/* Navigation */
+
+.nav-container{
+
+    background: var(--primary-color);
+    display: flex;
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.5); /* let it blur 10px */
+    max-height: var(--navigation-height);
+}   
+
+.nav-container > ul{
+    list-style: none;
+
+    width: 100vw;
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-container li{
+    font-size: 2.5vh;
+    color: white;
+    padding: 1vh 2vw;
+}
+
+.nav-container li a{
+    text-decoration: none;
+    color: white;
+    transition: 250ms ease-out;
+}
+
+.nav-container li a:hover{
+    text-decoration: none;
+    color: rgb(142, 206, 255);
+    transition: 250ms ease-out;
+}
+
+#navigation-title{
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+/* ====================================================================================================================================== */
+/* IAT START */
+
+.start-container{
+    display: flex;
+    min-height: calc(100vh - var(--navigation-height));
+
+    justify-content: center;
+    align-items: center;
+}
+
+.start-section{
+
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+
+    padding: 10vh;
+}
+
+.start-section > h1{
+
+    font-size: 7vh;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.start-section > a{
+
+    text-decoration: none;
+    border: 0.3vh solid var(--primary-color);
+
+    font-size: 2.5vh;
+    color: var(--primary-color);
+    text-align: center;
+    
+    transition: 250ms ease-out;
+    border-radius: 0.5vh;
+}
+
+.start-section > a:hover{
+    background: var(--primary-color);
+    color: white;
+    transition: 250ms ease-out;
+}
+
+/* ====================================================================================================================================== */
+/* FOOTER */
+
+footer{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+footer > p{
+    font-size: 2vh;
+    color: var(--secondary-color);
+}
