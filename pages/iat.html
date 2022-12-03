@@ -10,6 +10,16 @@
         <link rel="stylesheet" href="/styles.css">
     </head>
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ETXWZR5G4M"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-ETXWZR5G4M');
+    </script>
+
     <body>
 
         <nav class="nav-container">
@@ -22,13 +32,34 @@
         <main class="iat-container">
 
             <div class="instructions">
-                <h1>instructions</h1>
+                
+                <div class="instructions-header">
+                    <h1>Instructions</h1>
+                </div>
+                
+                <div class="instructions-text">
+                    <p class="instructions-welcome-text">Welcome to the IAT!<br>By taking this test, you are acknowledging the following:</p>
+                    <p class="instructions-acknowledgement-text">The pseudo-IAT presented to participants in the experiment do not collect any personal identifiers. Information collected within the survey process will include response time, which answer the user has selected, and which section they are on. All responses are anonymous and have no way of being traced. Users could have possible negative experiences in associating themselves or others with words displayed, such as "bad" or "gloomy."</p>
+                    <p class="instructions-agreement-text">If you agree to the above statements, please press <span class="enter">ENTER</span> to continue.</p>
 
-                <p class="instructions-text">An IAT Test is lorem ipsum</p>
-            </div>
+                    <p class="instructions-info-text content-gone">In the following test, you will be asked to associate words with each other.<br><span class="hotkeys-info">[E] = all else [I] = included</span></p>
+                    <p class="instructions-example-text content-gone">For example, the prompt for the section could be Self/Positive<br><br>If you were given the word "Happy," you would type <span class="hotkeys-info">[I]</span>. Or, if you were given the word "sad," you would type <span class="hotkeys-info">[E]</span> on your keyboard.</p>
+                    <p class="instructions-start-text content-gone">When you're ready, please press <span class="enter">ENTER</span> to start the test.</p>
+                </div>
+            </div> 
 
-            <div class="iat-questions">
+            <div class="iat-questions content-gone">
+            
+                <div class="question">
+                    <p class="question-section">
+                        Current Section: null
+                        <span class="question-section-name">Section Name</span>
+                    </p>     
+                    <p class="question-word">null word</p>               
+                </div>
 
+                <a class="left-choice">[E] All Else</a>
+                <a class="right-choice">[I] Included</a>
             </div>
 
         </main>
