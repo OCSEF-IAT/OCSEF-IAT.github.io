@@ -173,7 +173,7 @@ body{
     "left-choice question right-choice";
 
     align-items: center;
-    gap: 10vw;
+    gap: 5vw;
     padding-top: 10vh;
 }
 
@@ -189,7 +189,7 @@ body{
 
     min-height: 50vh;
     border: var(--dark-red) 0.25vh solid;
-    margin: 1vh 2vw;
+    margin: 0vh 0vw 0vh 2vw;
 
     display: flex;
     justify-content: center;
@@ -211,7 +211,7 @@ body{
 
     min-height: 50vh;
     border: var(--dark-green) 0.25vh solid;
-    margin: 1vh 2vw;
+    margin: 0vh 2vw 0vh 0vw;
 
     display: flex;
     justify-content: center;
@@ -240,7 +240,7 @@ body{
     align-items: center;
 }
 
-.question-section{
+.question-metadata{
     display: flex;
     flex-direction: column;
 
@@ -248,9 +248,49 @@ body{
     align-items: center;
 }
 
-.question > p{
-    text-align: start;
-    font-size: 3.75vh;
+.question-metadata > p, .question-word{
+    text-align: center;
+    font-size: 3.25vh;
+}
+
+/* ====================================================================================================================================== */
+/* IAT FINISH */
+
+.iat-finish{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+    gap: 7vh;
+
+    padding-top: 10vh;
+}
+
+.thank-you-message{
+    max-width: 50vw;
+    text-align: center;
+
+    font-size: 3.5vh;
+    color: var(--secondary-color);
+}
+
+.thank-you-message > a{
+    color: var(--primary-color);
+    font-weight: 600;
+    
+    text-decoration: none;
+}
+
+.thank-you-message > a:hover{
+    
+    text-decoration: underline;
+}
+
+#results-text{
+    font-size: 2.75vh;
+    padding-bottom: 7vh;
 }
 
 /* ====================================================================================================================================== */
@@ -262,7 +302,15 @@ footer{
     bottom: 0;
 }
 
-footer > p{
+footer > a{
     font-size: 2vh;
     color: var(--secondary-color);
+    text-decoration: none;
+    transition: 500ms ease;
+}
+
+footer > a:hover{
+
+    color: black;
+    transition: 500ms ease;
 }
