@@ -263,27 +263,38 @@ body{
     align-items: center;
 
     flex-direction: column;
-    gap: 7vh;
+    gap: 5vh;
 
     padding-top: 10vh;
 }
 
 .thank-you-message{
     max-width: 50vw;
-    text-align: center;
+    text-align: flex-start;
 
     font-size: 3.5vh;
     color: var(--secondary-color);
+
+    display: flex;
 }
 
-.thank-you-message > a{
+.form-links{
+    display: flex;
+    justify-content: space-between;
+
+    width: 50vw;
+}
+
+.form-links > a{
     color: var(--primary-color);
     font-weight: 600;
     
+    font-size: 3vh;
+    width: max-content;
     text-decoration: none;
 }
 
-.thank-you-message > a:hover{
+.form-links > a:hover{
     
     text-decoration: underline;
 }

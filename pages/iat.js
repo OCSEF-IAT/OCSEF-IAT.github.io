@@ -40,7 +40,9 @@ class IAT{
 
             let msElapsed = end - start; // Get the time elapsed
 
-            iatList.push([this.section, msElapsed + "ms", this.sectionPrompt, this.terms[i], keyChoice]);
+            iatList.push(["(" + this.section, msElapsed, this.sectionPrompt, "\"" + this.terms[i] + "\"", "\"" + keyChoice + "\"" + ")"]);
+            
+            
             console.log(iatList);
         }
         
@@ -49,10 +51,6 @@ class IAT{
         });
     }
 }
-
-/* Multivariable Assignment Example 
-   var [a,b,c] = [1,2,3];
-*/
 
 // FUNCTIONS =========================================================================================================================
 
