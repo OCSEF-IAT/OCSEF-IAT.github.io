@@ -18,11 +18,17 @@
     --secondary-color: #928f8f;
 
     --navigation-height: 10vh;
+    --dark-red: #8B0000;
+    --dark-green: #00794d;
 }
 
 body{
     position: relative;
     min-height: 100vh;
+}
+
+.content-gone{
+    display: none !important;
 }
 
 /* ====================================================================================================================================== */
@@ -118,6 +124,176 @@ body{
 }
 
 /* ====================================================================================================================================== */
+/* Instructions */ 
+
+.instructions{
+    display: flex;
+
+    padding-top: 10vh;
+    justify-content: center;
+    align-items: center;
+    
+    gap: 5vh;
+    flex-direction: column;
+}
+
+.instructions-header{
+    display: flex;
+
+    width: 60vw;
+    justify-content: flex-start;
+}
+
+.instructions-text{
+    display: flex;
+    gap: 7vh;
+    flex-direction: column;
+
+    max-width: 60vw;
+    font-size: 2.75vh;
+}
+
+.hotkeys-info{
+    font-weight: 600;
+    font-style: italic;
+}
+
+.enter{
+    font-weight: 600;
+    font-size: 3vh;
+}
+
+/* ====================================================================================================================================== */
+/* IAT QUESTIONS */
+
+.iat-questions{
+    display: grid;
+    
+    grid-template-areas: 
+    "left-choice question right-choice";
+
+    align-items: center;
+    gap: 5vw;
+    padding-top: 10vh;
+}
+
+.iat-questions > *{
+    text-align: center;
+}
+
+.left-choice{
+    grid-area: left-choice;
+    font-weight: 600;
+    color: var(--dark-red);
+    font-size: 4vh;
+
+    min-height: 50vh;
+    border: var(--dark-red) 0.25vh solid;
+    margin: 0vh 0vw 0vh 2vw;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 250ms ease;
+}
+
+.left-choice:hover{
+    background: var(--dark-red);
+    color: white;
+    transition: 250ms ease;
+}
+
+.right-choice{
+    grid-area: right-choice;
+    font-weight: 600;
+    color: var(--dark-green);
+    font-size: 4vh;
+
+    min-height: 50vh;
+    border: var(--dark-green) 0.25vh solid;
+    margin: 0vh 2vw 0vh 0vw;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 250ms ease;
+}
+
+.right-choice:hover{
+    background: var(--dark-green);
+    color: white;
+    transition: 250ms ease;
+}
+
+/*                     <p class="question-section">Current Section: null</p>     
+                    <p class="question-section-name">Section Name</p>
+                    <p class="question-word">null</p>           */
+
+.question{
+    grid-area: question;
+
+    display: flex;
+    flex-direction: column;
+    gap: 7vh;   
+
+    justify-content: center;
+    align-items: center;
+}
+
+.question-metadata{
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.question-metadata > p, .question-word{
+    text-align: center;
+    font-size: 3.25vh;
+}
+
+/* ====================================================================================================================================== */
+/* IAT FINISH */
+
+.iat-finish{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+    gap: 7vh;
+
+    padding-top: 10vh;
+}
+
+.thank-you-message{
+    max-width: 50vw;
+    text-align: center;
+
+    font-size: 3.5vh;
+    color: var(--secondary-color);
+}
+
+.thank-you-message > a{
+    color: var(--primary-color);
+    font-weight: 600;
+    
+    text-decoration: none;
+}
+
+.thank-you-message > a:hover{
+    
+    text-decoration: underline;
+}
+
+#results-text{
+    font-size: 2.75vh;
+    padding-bottom: 7vh;
+}
+
+/* ====================================================================================================================================== */
 /* FOOTER */
 
 footer{
@@ -126,7 +302,15 @@ footer{
     bottom: 0;
 }
 
-footer > p{
+footer > a{
     font-size: 2vh;
     color: var(--secondary-color);
+    text-decoration: none;
+    transition: 500ms ease;
+}
+
+footer > a:hover{
+
+    color: black;
+    transition: 500ms ease;
 }
