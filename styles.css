@@ -17,7 +17,7 @@
     --primary-color: #3693d6;
     --secondary-color: #928f8f;
 
-    --navigation-height: 10vh;
+    --navigation-height: 6vh;
     --dark-red: #8B0000;
     --dark-green: #00794d;
 }
@@ -40,7 +40,7 @@ body{
     display: flex;
 
     box-shadow: 0 0 10px rgba(0,0,0,0.5); /* let it blur 10px */
-    max-height: var(--navigation-height);
+    height: var(--navigation-height);
 }   
 
 .nav-container > ul{
@@ -92,12 +92,14 @@ body{
 
     display: flex;
     flex-direction: column;
-    gap: 5vh;
+    gap: 4vh;
 
     padding: 10vh;
 }
 
 .start-section > h1{
+
+    text-align: center;
 
     font-size: 7vh;
     font-weight: bold;
