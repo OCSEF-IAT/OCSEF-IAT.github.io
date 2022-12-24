@@ -227,10 +227,6 @@ body{
     transition: 250ms ease;
 }
 
-/*                     <p class="question-section">Current Section: null</p>     
-                    <p class="question-section-name">Section Name</p>
-                    <p class="question-word">null</p>           */
-
 .question{
     grid-area: question;
 

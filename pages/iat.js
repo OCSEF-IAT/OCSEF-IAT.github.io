@@ -42,7 +42,6 @@ class IAT{
 
             iatList.push(["(" + this.section, msElapsed, this.sectionPrompt, "\"" + this.terms[i] + "\"", "\"" + keyChoice + "\"" + ")"]);
             
-            
             console.log(iatList);
         }
         
@@ -191,4 +190,3 @@ rootElement.addEventListener("keyup", (keyboardEvent) => {
         choiceSelected();
     }
 })
-
