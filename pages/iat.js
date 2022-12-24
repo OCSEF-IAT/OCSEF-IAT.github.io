@@ -15,6 +15,7 @@ const question_word = document.getElementsByClassName("question-word")[0];
 
 // This is where all the iatData will go. It will be displayed at the end of the test
 const iatList = [];
+const iatDict = new Object();
 
 let optionChosen = false;
 class IAT{
@@ -160,7 +161,15 @@ function endTest(){
     iat_questions.classList.add("content-gone");
     iat_finish.classList.remove("content-gone");
 
+    getRequest();
+    
     results_text.innerHTML = iatList.join("<br>"); // Split each element in the arraylist by line break
+}
+
+async function getRequest(){
+    const response = await fetch('https://myservertest.azurewebsites.net/teacher/' + iatList);
+    const data = await response.json();
+    console.log(data);
 }
 
 // MAINSETUP =========================================================================================================================
