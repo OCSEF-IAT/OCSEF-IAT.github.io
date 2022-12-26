@@ -11,6 +11,8 @@
   
     margin: 0;
     padding: 0;
+
+    box-sizing: border-box;
 }
    
 :root{
@@ -19,7 +21,11 @@
 
     --navigation-height: 6vh;
     --dark-red: #8B0000;
-    --dark-green: #00794d;
+    --dark-green: #00b900;
+    --grayish: #404040;
+    --gold: #ffb744;
+
+    --instructions-content-width: 60vw;
 }
 
 body{
@@ -29,6 +35,39 @@ body{
 
 .content-gone{
     display: none !important;
+}
+
+/* ====================================================================================================================================== */
+/* Animations */
+
+.fadeIn{
+    animation: fadeIn 250ms ease-in-out;
+}
+
+.fadeInStartIAT{
+    animation: fadeIn 500ms ease-in-out;
+}
+
+.fadeOut{
+    animation: fadeOut 500ms ease-in-out;
+}
+
+@keyframes fadeIn{
+    0%{
+        opacity: 0.05;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut{
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0.05;
+    }
 }
 
 /* ====================================================================================================================================== */
@@ -126,6 +165,150 @@ body{
 }
 
 /* ====================================================================================================================================== */
+/* User Survey */ 
+
+.user-survey{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 7vh;
+    margin-top: 10vh;
+}
+
+.user-survey-header{
+    width: var(--instructions-content-width);
+}
+.user-survey-header > p{
+    color: black;
+    font-size: 3vh;
+}
+
+.user-survey-query{
+    width: var(--instructions-content-width);
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 7vh;
+}
+
+.user-survey-relationship{
+    color: var(--grayish);
+    font-size: 2.75vh;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.user-survey-relationship-selector{
+    display: flex;
+    gap: 1.5vw;
+}
+
+.user-survey-relationship-selector > a{
+    border: 0.3vh solid var(--primary-color);
+    min-width: 8vw;
+    text-align: center;
+    border-radius: 0.5vh;
+
+    padding: 0.5vh;
+    font-size: 2.5vh;
+    color: black;
+
+    transition: 250ms ease;
+}
+
+.user-survey-relationship-selector > a:hover{
+    background: var(--primary-color);
+    color: white;
+
+    cursor: pointer;
+    transition: 250ms ease;
+}
+
+.user-survey-relationship-selector-clicked{
+    background: var(--primary-color);
+    color: white !important;
+}
+
+/* ====================================================================================================================================== */
+/* Student Info */
+
+.user-survey-grade, .user-survey-classes{
+    color: var(--grayish);
+    font-size: 2.75vh;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.user-survey-grade-selector, .user-survey-classes-selector{
+    display: flex;
+    gap: 1.5vw;
+}
+
+.user-survey-grade-selector > a, .user-survey-classes-selector > a{
+    border: 0.3vh solid var(--primary-color);
+    min-width: 3vw;
+    text-align: center;
+    border-radius: 0.5vh;
+
+    padding: 0.5vh;
+    font-size: 2.5vh;
+    color: black;
+
+    transition: 250ms ease;
+}
+
+.user-survey-grade-selector > a:hover, .user-survey-classes-selector > a:hover{
+    background: var(--primary-color);
+    color: white;
+
+    cursor: pointer;
+    transition: 250ms ease;
+}
+
+.user-survey-grade-selector-clicked, .user-survey-classes-selector-clicked{
+    background: var(--primary-color);
+    color: white !important;
+}
+
+.user-survey-submission{
+    width: var(--instructions-content-width);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.user-survey-submission > a{
+    border: 0.3vh solid var(--dark-green);
+    color: var(--dark-green);
+
+    text-align: center;
+    border-radius: 0.5vh;
+
+    width: 8vw;
+    font-size: 2.5vh;
+
+    padding: 0.5vh;
+    border-radius: 0.5vh;
+
+    transition: 250ms ease;
+}
+
+.user-survey-submission > a:hover{
+    background: var(--dark-green);
+    color: white;
+
+    cursor: pointer;
+    transition: 250ms ease;
+}
+
+/* ====================================================================================================================================== */
 /* Instructions */ 
 
 .instructions{
@@ -142,7 +325,7 @@ body{
 .instructions-header{
     display: flex;
 
-    width: 60vw;
+    width: var(--instructions-content-width);
     justify-content: flex-start;
 }
 
@@ -151,13 +334,17 @@ body{
     gap: 7vh;
     flex-direction: column;
 
-    max-width: 60vw;
+    width: var(--instructions-content-width);
     font-size: 2.75vh;
 }
 
-.hotkeys-info{
+.hotkeys-info, .bold{
     font-weight: 600;
     font-style: italic;
+}
+
+.underline{
+    text-decoration: underline;
 }
 
 .enter{
@@ -177,6 +364,8 @@ body{
     align-items: center;
     gap: 5vw;
     padding-top: 10vh;
+
+    grid-auto-columns: 1fr;
 }
 
 .iat-questions > *{

@@ -31,19 +31,71 @@
 
         <main class="iat-container">
 
-            <div class="instructions">
+            <div class="user-survey">
+                <div class="user-survey-header">
+                    <p>Before we begin, please input the following choices:</p>
+                </div>
+
+                <div class="user-survey-query">
+
+                    <article class="user-survey-relationship">
+                        <p>I am a Teacher or Student:</p>
+
+                        <section class="user-survey-relationship-selector">
+                            <a id="user-survey-relationship-teacher">Teacher</a>
+                            <a id="user-survey-relationship-student">Student</a>
+                        </section>
+                    </article>
+
+                    <article class="user-survey-grade content-gone">
+                        <p>I am in What Grade:</p>
+
+                        <section class="user-survey-grade-selector">
+                            <a class="user-survey-grade-option">3</a>
+                            <a class="user-survey-grade-option">4</a>
+                            <a class="user-survey-grade-option">5</a>
+                            <a class="user-survey-grade-option">6</a>
+                            <a class="user-survey-grade-option">7</a>
+                            <a class="user-survey-grade-option">8</a>
+                            <a class="user-survey-grade-option">9</a>
+                            <a class="user-survey-grade-option">10</a>
+                            <a class="user-survey-grade-option">11</a>
+                            <a class="user-survey-grade-option">12</a>  
+                        </section>
+                    </article>
+
+                    <article class="user-survey-classes content-gone">  
+                        <p>I am in How Many Honors or AP Classes:</p>
+
+                        <section class="user-survey-classes-selector">
+                            <a class="user-survey-classes-option">0</a>
+                            <a class="user-survey-classes-option">1</a>
+                            <a class="user-survey-classes-option">2</a>
+                            <a class="user-survey-classes-option">3</a>
+                            <a class="user-survey-classes-option">4+</a>
+                        </section>
+                    </article>
+
+                </div>
+
+                <div class="user-survey-submission content-gone">
+                    <a>Submit</a>
+                </div>
+            </div>
+            
+            <div class="instructions content-gone">
                 
                 <div class="instructions-header">
                     <h1>Instructions</h1>
                 </div>
-                
+
                 <div class="instructions-text">
                     <p class="instructions-welcome-text">Welcome to the IAT!<br>By taking this test, you are acknowledging the following:</p>
                     <p class="instructions-acknowledgement-text">The pseudo-IAT presented to participants in the experiment do not collect any personal identifiers. Information collected within the survey process will include response time, which answer the user has selected, and which section they are on in addition to basic information like grade-level. All responses are anonymous and have no way of being traced. Users could have possible negative experiences in associating themselves or others with words displayed, such as "bad" or "gloomy."</p>
-                    <p class="instructions-agreement-text">If you agree to the above statements, please press <span class="enter">ENTER</span> to continue.</p>
+                    <p class="instructions-agreement-text">If you are okay with the above statements, please press <span class="enter">ENTER</span> to continue.</p>
 
-                    <p class="instructions-info-text content-gone">In the following test, you will be asked to associate words with each other.<br><span class="hotkeys-info">[E] = all else [I] = included</span></p>
-                    <p class="instructions-example-text content-gone">For example, the prompt for the section could be Self/Positive<br><br>If you were given the word "Happy," you would type <span class="hotkeys-info">[I]</span>. Or, if you were given the word "sad," you would type <span class="hotkeys-info">[E]</span> on your keyboard.</p>
+                    <p class="instructions-info-text content-gone">In the following test, you will be asked to <span class="underline">associate words with each other</span> with the following keys:<br><span class="hotkeys-info">[I] = Included Yes, [E] = Ew No</span></p>
+                    <p class="instructions-example-text content-gone">For example, the prompt for the section could be about <span class="bold">Positivity and Self</span><br><br>If you were given the word "Happy," you would type <span class="hotkeys-info">[I]</span>. Or, if you were given the word "sad," you would type <span class="hotkeys-info">[E]</span> on your keyboard.</p>
                     <p class="instructions-start-text content-gone">When you're ready, please press <span class="enter">ENTER</span> to start the test.</p>
                 </div>
             </div> 
@@ -60,8 +112,8 @@
                     <p class="question-word">null word</p>               
                 </div>
 
-                <a class="left-choice">[E] All Else</a>
-                <a class="right-choice">[I] Included</a>
+                <a class="left-choice">[E] Ew No</a>
+                <a class="right-choice">[I] Included Yes</a>
             </div>
 
             <div class="iat-finish content-gone">
@@ -83,5 +135,6 @@
         </footer>
 
         <script src="/pages/iat.js" async defer></script>
+        <script src="/pages/info.js" async defer></script>
     </body>
 </html>

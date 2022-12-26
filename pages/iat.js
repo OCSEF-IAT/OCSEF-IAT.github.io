@@ -1,22 +1,71 @@
 // VARIABLES =========================================================================================================================
 
 const rootElement = document.documentElement;
-
 const iat_container = document.getElementsByClassName("iat-container")[0];
+
+// IAT Instructions Screen
 const instructions = document.getElementsByClassName("instructions")[0];
 const iat_agreement = document.getElementsByClassName("instructions-agreement-text")[0];
 
+// IAT Process
 const iat_questions = document.getElementsByClassName("iat-questions")[0];
 const question_section = document.getElementsByClassName("question-section")[0];
 const section_name = document.getElementsByClassName("question-section-name")[0];
 const question_word = document.getElementsByClassName("question-word")[0];
 
+// Survey Submission
+const _submission = document.getElementsByClassName("user-survey-submission")[0];
+
+_submission.addEventListener("click", () => {
+    storeSurveyData();
+});
+
+// GRAB USER SURVEY DATA =============================================================================================================
+
+// This is where all the iatData will go. It will be sent to the database at the end of the test
+let userData = {};
+
+function storeSurveyData(){
+    // We get this data to store later with the IAT reaction times
+    // Student or Teacher
+    const _teacher = document.getElementById("user-survey-relationship-teacher");
+    const _student = document.getElementById("user-survey-relationship-student");
+
+    // User Survey Options for Student
+    const _gradeOptions = document.getElementsByClassName("user-survey-grade-option");
+    const _classOptions = document.getElementsByClassName("user-survey-classes-option");
+
+    // Check if the user is a teacher or student
+    (_teacher.classList.contains("user-survey-relationship-selector-clicked")) ? userData.relationship = "Teacher" : userData.relationship = "Student";
+
+    // Get the index for the grade and class choice that the student clicks 
+    for (let option = 0; option < _gradeOptions.length; option += 1){
+        if (_gradeOptions[option].classList.contains("user-survey-grade-selector-clicked")){
+
+            // Add the grade to the userData object
+            userData.grade = parseInt(_gradeOptions[option].innerHTML);
+        }
+    }
+
+    for (let option = 0; option < _classOptions.length; option += 1){
+        if (_classOptions[option].classList.contains("user-survey-classes-selector-clicked")){
+
+            // Add the class to the userData object
+            userData.classesAdvanced = parseInt(_classOptions[option].innerHTML);
+        }
+    }
+
+    // console.log(userData);
+
+    // Start the IAT instructions and process
+    beginInstructions();
+}
+
 // IAT CLASS =========================================================================================================================
 
-// This is where all the iatData will go. It will be displayed at the end of the test
-const iatList = [];
-const iatDict = new Object();
-
+// This is where all the IAT data will go. It will be sent to the database at the end of the test
+let iatList = []; 
+ 
 let optionChosen = false;
 class IAT{
 
@@ -42,7 +91,7 @@ class IAT{
             let msElapsed = end - start; // Get the time elapsed
 
             iatList.push(["(" + this.section, msElapsed, this.sectionPrompt, "\"" + this.terms[i] + "\"", "\"" + keyChoice + "\"" + ")"]);
-            
+
             console.log(iatList);
         }
         
@@ -54,6 +103,26 @@ class IAT{
 
 // FUNCTIONS =========================================================================================================================
 
+// Remove the user survey and reveal the IAT instructions (welcome)
+function beginInstructions(){
+    let survey = document.getElementsByClassName("user-survey")[0];
+
+    let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
+    let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
+
+    if (userData.relationship === "Student"){
+        let gradeLevel;
+        (userData.grade === 3) ? gradeLevel = "rd" : gradeLevel = "th";
+
+        welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
+        acknowledgement.innerHTML = "The survey you have here does not collect any personal identifiers. Today, we want to test your reaction speed to a couple of questions. Your answers have no way of being traced. You may have negative answer choices to choose from, like as \"bad\" or \"gloomy.\" Some people may not like this.";
+    }
+    
+    survey.classList.add("content-gone");
+    instructions.classList.remove("content-gone");
+
+}
+
 // Remove the welcome and acknowedgement text and reveal how to use the IAT
 function continueInstructions(){
     
@@ -64,6 +133,10 @@ function continueInstructions(){
     let example = document.getElementsByClassName("instructions-example-text content-gone")[0];
     let start = document.getElementsByClassName("instructions-start-text")[0];
 
+    // Left choice and right choice buttons
+    let left_choice_start = document.getElementsByClassName("left-choice")[0];
+    let right_choice_start = document.getElementsByClassName("right-choice")[0];
+
     welcome.classList.add("content-gone");
     acknowledgement.classList.add("content-gone");
     iat_agreement.classList.add("content-gone");
@@ -71,6 +144,9 @@ function continueInstructions(){
     info.classList.remove("content-gone");
     example.classList.remove("content-gone");
     start.classList.remove("content-gone");
+
+    left_choice_start.classList.add("fadeInStartIAT");
+    right_choice_start.classList.add("fadeInStartIAT");
 }
 
 // Fisher-Yates Shuffle: https://bost.ocks.org/mike/shuffle/
@@ -94,8 +170,6 @@ function shuffleArray(array){
       array[arrayIndex] = array[remainingValue];
       array[remainingValue] = currentValue; // keep swapping values
     }
-  
-    console.log(array);
     return array;  
 }
 
@@ -120,38 +194,56 @@ async function startTest(){
     iat_questions.classList.remove("content-gone");
     instructions.classList.add("content-gone");
 
-    let positiveTerms = ["Motivated", "Studious", "Competent", "Collaborative"];
-    let negativeTerms = ["Disruptive", "Lazy", "Cheaters", "Irresponsible"];
-    let studentTerms  = ["Pupil", "Learner"];
-    let themTerms     = ["Them", "Other"];
+    // Set terms based on whether the user is a student or a teacher
+    let positiveTerms;
+    let negativeTerms;
+    let studentTerms;
+    let themTerms;
 
+    if (userData.relationship === "Student"){
+        positiveTerms = ["Joyful", "Happy", "Content", "Cheerful"];
+        negativeTerms = ["Miserable", "Sad", "Gloomy", "Depressed"];
+        studentTerms  = ["Me", "Self", "I", "My"];
+        themTerms     = ["Them", "Other", "Him", "Her"];
+    }
+    else if (userData.relationship === "Teacher"){
+        positiveTerms = ["Motivated", "Studious", "Competent", "Collaborative"];
+        negativeTerms = ["Disruptive", "Lazy", "Cheaters", "Irresponsible"];
+        studentTerms  = ["Pupil", "Learner"];
+        themTerms     = ["Them", "Other"];
+    }
+
+    // Group all terms together and shuffle later
     let termGroups = [positiveTerms, negativeTerms, studentTerms, themTerms].flat();
 
-    const iatOne = new IAT("Student & Positive", 1, shuffleArray(termGroups));
+    const iatOne = new IAT('Student & Positive', 1, shuffleArray(termGroups));
     await iatOne.run();
 
-    const iatTwo = new IAT("Student & Negative", 2, shuffleArray(termGroups));
+    const iatTwo = new IAT('Student & Negative', 2, shuffleArray(termGroups));
     await iatTwo.run();
 
-    const iatThr = new IAT("Student & Positive", 3, shuffleArray(termGroups));
+    const iatThr = new IAT('Student & Positive', 3, shuffleArray(termGroups));
     await iatThr.run();
 
-    const iatFour = new IAT("Student & Negative", 4, shuffleArray(termGroups));
+    const iatFour = new IAT('Student & Negative', 4, shuffleArray(termGroups));
     await iatFour.run();
 
-    const iatFive = new IAT("Student & Positive", 5, shuffleArray(termGroups));
+    const iatFive = new IAT('Student & Positive', 5, shuffleArray(termGroups));
     await iatFive.run();
 
-    const iatSix = new IAT("Student & Negative", 6, shuffleArray(termGroups));
+    const iatSix = new IAT('Student & Negative', 6, shuffleArray(termGroups));
     await iatSix.run();
 
-    const iatSeven = new IAT("Student & Positive", 7, shuffleArray(termGroups));
+    const iatSeven = new IAT('Student & Positive', 7, shuffleArray(termGroups));
     await iatSeven.run();
 
-    const iatEight = new IAT("Student & Negative", 8, shuffleArray(termGroups));
+    const iatEight = new IAT('Student & Negative', 8, shuffleArray(termGroups));
     await iatEight.run();
 
     endTest();
+
+    userData.data = iatList;
+    console.log(JSON.stringify(userData));
 }  
 
 function endTest(){
@@ -167,32 +259,42 @@ function endTest(){
 }
 
 async function getRequest(){
-    const response = await fetch('https://myservertest.azurewebsites.net/teacher/' + iatList);
+    const response = await fetch('https://myservertest.azurewebsites.net/teacher/' + JSON.stringify(userData)); // convery object to JSON
     const data = await response.json();
     console.log(data);
 }
 
 // MAINSETUP =========================================================================================================================
 
+// Check if the user has completed the user survey
+let metInstructions = false;
+
+// Check if the user has agreed to the terms
 let startedTest = false;
 let agreeTerms = false;
 
 rootElement.addEventListener("keyup", (keyboardEvent) => {
+
+    // Check if the user has completed the user survey (all surveys have a relationship property)
+    (userData.hasOwnProperty("relationship"))? metInstructions = true : metInstructions = false;
+
     if (keyboardEvent.key === "Enter") {
     
         // Check if the user has agreed to the terms
         if (startedTest === true) {
             return;
         } 
-        if (agreeTerms === false) {
+        if (agreeTerms === false && metInstructions === true) {
             agreeTerms = true;
             continueInstructions();
             return;
         }
         
         // Once the user understands what they need to do, start the test
-        (agreeTerms === true) ? startTest() : null;
-        (agreeTerms === true) ? startedTest = true : null;
+        if (agreeTerms === true){
+            startTest();
+            startedTest = true;
+        }
     }
 
     if (keyboardEvent.key === "e" || keyboardEvent.key === "i"){
