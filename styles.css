@@ -48,6 +48,14 @@ body{
     animation: fadeIn 500ms ease-in-out;
 }
 
+.fadeInBreather{
+    animation: fadeIn 750ms ease-in-out;
+}
+
+.fade-in-iat-question{
+    animation: fadeIn 150ms ease-in-out;
+}
+
 .fadeOut{
     animation: fadeOut 500ms ease-in-out;
 }
@@ -438,6 +446,48 @@ body{
 .question-metadata > p, .question-word{
     text-align: center;
     font-size: 3.25vh;
+}
+
+.question-word{
+    color: var(--primary-color);
+    font-size: 3.75vh;
+}
+
+/* ====================================================================================================================================== */
+/* IAT BREATHER */
+
+.iat-breather{
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 3.5vh;
+    padding-top: 10vh;
+}
+
+.iat-breather-message{
+    font-size: 3.75vh;
+}
+
+.iat-breather-timer{
+    font-size: 3vh;
+}
+
+.iat-breather-image{
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+
+    text-align: center;
+    font-size: 2.75vh;
+}
+
+.iat-breather-image > img{
+    border-radius: 3vh;
+    max-height: 40vh;
+    max-width: 40vw;
 }
 
 /* ====================================================================================================================================== */
