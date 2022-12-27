@@ -294,31 +294,31 @@ async function startTest(){
 
     const iatOne = new IAT('Student & Positive', 1, shuffleArray(termGroups));
     await iatOne.run();
-    //await iatOne.pause();
+    await iatOne.pause();
 
     const iatTwo = new IAT('Student & Negative', 2, shuffleArray(termGroups));
     await iatTwo.run();
-    //await iatTwo.pause();
+    await iatTwo.pause();
 
     const iatThr = new IAT('Student & Positive', 3, shuffleArray(termGroups));
     await iatThr.run();
-    //await iatThr.pause();
+    await iatThr.pause();
 
     const iatFour = new IAT('Student & Negative', 4, shuffleArray(termGroups));
     await iatFour.run();
-    //await iatFour.pause();
+    await iatFour.pause();
 
     const iatFive = new IAT('Student & Positive', 5, shuffleArray(termGroups));
     await iatFive.run();
-    //await iatFive.pause();
+    await iatFive.pause();
 
     const iatSix = new IAT('Student & Negative', 6, shuffleArray(termGroups));
     await iatSix.run();
-    //await iatSix.pause();
+    await iatSix.pause();
 
     const iatSeven = new IAT('Student & Positive', 7, shuffleArray(termGroups));
     await iatSeven.run();
-    //await iatSeven.pause();
+    await iatSeven.pause();
 
     const iatEight = new IAT('Student & Negative', 8, shuffleArray(termGroups));
     await iatEight.run();
