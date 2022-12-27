@@ -500,45 +500,30 @@ body{
     align-items: center;
 
     flex-direction: column;
-    gap: 5vh;
+    gap: 10vh;
 
     padding-top: 10vh;
 }
 
-.thank-you-message{
-    max-width: 50vw;
-    text-align: flex-start;
-
-    font-size: 3.5vh;
-    color: var(--secondary-color);
-
-    display: flex;
+.iat-finish-thank-you-message{
+    font-size: 4vh;
+    color: var(--grayish);
 }
 
-.form-links{
-    display: flex;
-    justify-content: space-between;
-
-    width: 50vw;
-}
-
-.form-links > a{
-    color: var(--primary-color);
-    font-weight: 600;
-    
+.iat-finish-inspirational-quote-container{
+    font-style: italic;
     font-size: 3vh;
-    width: max-content;
-    text-decoration: none;
+
+    display: flex;
+    gap: 2vh;
+    flex-direction: column;
+
+    max-width: 45vw;
 }
 
-.form-links > a:hover{
-    
-    text-decoration: underline;
-}
-
-#results-text{
-    font-size: 2.75vh;
-    padding-bottom: 7vh;
+.iat-finish-inspirational-quote-author{
+    font-style: normal;
+    font-size: 2.5vh;
 }
 
 /* ====================================================================================================================================== */

@@ -324,19 +324,41 @@ async function startTest(){
     await iatEight.run();
 
     userData.data = iatList; // adding the IAT data to the userData object
-    endTest();
+    await endTest();
 }  
 
-function endTest(){
+async function endTest(){
     let iat_finish = document.getElementsByClassName("iat-finish")[0];
-    let results_text = document.getElementById("results-text");
+    let iat_quote = document.getElementsByClassName("iat-finish-inspirational-quote")[0];
+    let iat_qoute_author = document.getElementsByClassName("iat-finish-inspirational-quote-author")[0];
+
+    let iat_quote_container = document.getElementsByClassName("iat-finish-inspirational-quote-container")[0];
 
     iat_questions.classList.add("content-gone");
     iat_finish.classList.remove("content-gone");
 
+    iat_finish.classList.add("fadeIn");
+
+    // Get a random quote from the list of quotes (no-cors mode is used in the GET Request to bypass CORS)
+    try{
+        let getQuote = await fetch("https://api.quotable.io/random");
+        let quote = await getQuote.json();
+
+        // Display the quote for the user to see
+        iat_quote.innerHTML = `"${quote.content}"`;
+        iat_qoute_author.innerHTML = `— ${quote.author}`;
+
+        iat_quote_container.classList.add("fadeIn");
+    }
+    catch(err){
+        console.log(err);
+    }
+
+    // Send the data to the server
     postRequestData();
-    
-    results_text.innerHTML = iatList.join("<br>"); // Split each element in the arraylist by line break
+
+    // Offically close the startTest() function
+    return new Promise((resolve) => { resolve(); });
 }
 
 async function postRequestData(){
@@ -344,7 +366,7 @@ async function postRequestData(){
     // Check if the user is a student or a teacher
     let relationship = userData.relationship;
 
-    const response = await fetch(`https://myservertest.azurewebsites.net/${relationship}/`, { 
+    const response = await fetch(`https://myservertest.azurewebsites.net/${relationship.toLowerCase()}/`, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json' // send a JSON to the server
