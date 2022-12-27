@@ -81,7 +81,7 @@ class IAT{
         this.section = sectionNumber;
         this.totalSections = 8;
 
-        this.timeCounter = 10; // 10 second break time
+        this.timeCounter = 5; // 5 second break time
     }
 
     async run(){
@@ -135,7 +135,7 @@ class IAT{
             iat_breather_timer.innerHTML = "<strong>You're on break for " + this.timeCounter + " seconds!</strong>";
         }, 1000)
 
-        // Once a promise is returned, continue the IAT process (after 10 seconds)
+        // Once a promise is returned, continue the IAT process (after 5 seconds)
         // Because of this, we do not need a continue button
         return new Promise((resolve) => { 
             setTimeout(() => {
@@ -147,12 +147,12 @@ class IAT{
                 // Stop the timer
                 clearInterval(timer);
 
-                this.timeCounter = 10; // reset class variable (all classes use the same instance value)
-                iat_breather_timer.innerHTML = "<strong>You're on break for " + "10" + " seconds!</strong>";
+                this.timeCounter = 5; // reset class variable (all classes use the same instance value)
+                iat_breather_timer.innerHTML = "<strong>You're on break for " + "5" + " seconds!</strong>";
 
                 // End the promise so the IAT process can continue
                 resolve();
-            }, 10000);    
+            }, 5000);    
         });
     }
 
