@@ -13,6 +13,12 @@ const question_section = document.getElementsByClassName("question-section")[0];
 const section_name = document.getElementsByClassName("question-section-name")[0];
 const question_word = document.getElementsByClassName("question-word")[0];
 
+// IAT Breather Screen
+const iat_breather = document.getElementsByClassName("iat-breather")[0];
+const iat_breather_img = document.getElementById("iat-breather-image");
+const iat_breather_message = document.getElementsByClassName("iat-breather-message")[0];
+const iat_breather_timer = document.getElementsByClassName("iat-breather-timer")[0];
+
 // Survey Submission
 const _submission = document.getElementsByClassName("user-survey-submission")[0];
 
@@ -74,9 +80,12 @@ class IAT{
         this.terms = terms;
         this.section = sectionNumber;
         this.totalSections = 8;
+
+        this.timeCounter = 10; // 10 second break time
     }
 
     async run(){
+
         section_name.innerHTML = "Current Section: " + "<strong>" + this.sectionPrompt + "</strong>";
         question_section.innerHTML = "Section " + this.section + " of " + this.totalSections;
 
@@ -84,19 +93,85 @@ class IAT{
             
             question_word.innerHTML = this.terms[i];
 
+            // Reset animation as new words are being displayed to the user            
+            question_word.classList.add("fade-in-iat-question");
+
+            setTimeout(() => {
+                question_word.classList.remove("fade-in-iat-question");
+            }, 150);
+            
             let start = Date.now(); // Get the current time
             let keyChoice = await choiceSelected(); // Wait for the user to make a choice
             let end = Date.now();
 
             let msElapsed = end - start; // Get the time elapsed
 
-            iatList.push(["(" + this.section, msElapsed, this.sectionPrompt, "\"" + this.terms[i] + "\"", "\"" + keyChoice + "\"" + ")"]);
+            iatList.push([this.section, msElapsed, this.sectionPrompt, this.terms[i], keyChoice]);
 
             console.log(iatList);
         }
         
         return new Promise((resolve) => { 
             resolve();
+        });
+    }
+
+    // After the user has finished their section, this method can be called ot pause for a break
+    async pause(){
+        let catImage = await this.getCatImage();
+        
+        // Hide the question section and show a break screen
+        iat_breather.classList.remove("content-gone");
+        iat_breather.classList.add("fadeInBreather");
+
+        iat_questions.classList.add("content-gone"); 
+        
+        iat_breather_img.src = catImage[0].url; // [0] is the promise result
+        iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
+
+
+        const timer = setInterval(() => {
+            this.timeCounter -= 1;
+            iat_breather_timer.innerHTML = "<strong>You're on break for " + this.timeCounter + " seconds!</strong>";
+        }, 1000)
+
+        // Once a promise is returned, continue the IAT process (after 10 seconds)
+        // Because of this, we do not need a continue button
+        return new Promise((resolve) => { 
+            setTimeout(() => {
+                iat_breather.classList.remove("fadeInBreather");
+                iat_breather.classList.add("content-gone");
+
+                iat_questions.classList.remove("content-gone");
+
+                // Stop the timer
+                clearInterval(timer);
+
+                this.timeCounter = 10; // reset class variable (all classes use the same instance value)
+                iat_breather_timer.innerHTML = "<strong>You're on break for " + "10" + " seconds!</strong>";
+
+                // End the promise so the IAT process can continue
+                resolve();
+            }, 10000);    
+        });
+    }
+
+    getCatImage(){
+        return new Promise(async (resolve) => {
+            let result;
+            
+            // GET request to Cat API for a random cat image
+            // Convert response.json() converts JSON to a JS object
+            try{
+                let response = await fetch("https://api.thecatapi.com/v1/images/search?larryfoundcatapi");
+                result = await response.json(); 
+            }
+            catch (err){
+                console.log(err);
+            }
+            finally{
+                resolve(result);
+            }
         });
     }
 }
@@ -115,7 +190,7 @@ function beginInstructions(){
         (userData.grade === 3) ? gradeLevel = "rd" : gradeLevel = "th";
 
         welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
-        acknowledgement.innerHTML = "The survey you have here does not collect any personal identifiers. Today, we want to test your reaction speed to a couple of questions. Your answers have no way of being traced. You may have negative answer choices to choose from, like as \"bad\" or \"gloomy.\" Some people may not like this.";
+        acknowledgement.innerHTML = "The survey you have here does not collect any personal identifiers. Today, we want to test your reaction speed to a couple of questions; your answers are all anonymous. You may have negative answer choices to choose from, like as \"bad\" or \"gloomy.\" Some people may not like this.";
     }
     
     survey.classList.add("content-gone");
@@ -191,6 +266,7 @@ function choiceSelected() {
 // By starting the test, hide the instructions and reveal the upcoming questions
 // We want the terms to be jumbled up together randomly so we use randomArray() function 
 async function startTest(){
+    // Start the IAT process
     iat_questions.classList.remove("content-gone");
     instructions.classList.add("content-gone");
 
@@ -218,32 +294,37 @@ async function startTest(){
 
     const iatOne = new IAT('Student & Positive', 1, shuffleArray(termGroups));
     await iatOne.run();
+    //await iatOne.pause();
 
     const iatTwo = new IAT('Student & Negative', 2, shuffleArray(termGroups));
     await iatTwo.run();
+    //await iatTwo.pause();
 
     const iatThr = new IAT('Student & Positive', 3, shuffleArray(termGroups));
     await iatThr.run();
+    //await iatThr.pause();
 
     const iatFour = new IAT('Student & Negative', 4, shuffleArray(termGroups));
     await iatFour.run();
+    //await iatFour.pause();
 
     const iatFive = new IAT('Student & Positive', 5, shuffleArray(termGroups));
     await iatFive.run();
+    //await iatFive.pause();
 
     const iatSix = new IAT('Student & Negative', 6, shuffleArray(termGroups));
     await iatSix.run();
+    //await iatSix.pause();
 
     const iatSeven = new IAT('Student & Positive', 7, shuffleArray(termGroups));
     await iatSeven.run();
+    //await iatSeven.pause();
 
     const iatEight = new IAT('Student & Negative', 8, shuffleArray(termGroups));
     await iatEight.run();
 
+    userData.data = iatList; // adding the IAT data to the userData object
     endTest();
-
-    userData.data = iatList;
-    console.log(JSON.stringify(userData));
 }  
 
 function endTest(){
@@ -253,15 +334,24 @@ function endTest(){
     iat_questions.classList.add("content-gone");
     iat_finish.classList.remove("content-gone");
 
-    getRequest();
+    postRequestData();
     
     results_text.innerHTML = iatList.join("<br>"); // Split each element in the arraylist by line break
 }
 
-async function getRequest(){
-    const response = await fetch('https://myservertest.azurewebsites.net/teacher/' + JSON.stringify(userData)); // convery object to JSON
-    const data = await response.json();
-    console.log(data);
+async function postRequestData(){
+    
+    // Check if the user is a student or a teacher
+    let relationship = userData.relationship;
+
+    const response = await fetch(`https://myservertest.azurewebsites.net/${relationship}/`, { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // send a JSON to the server
+        },
+        body: JSON.stringify(userData)
+    });
+    console.log(response.json()); // Get response from server and convert to JS Object
 }
 
 // MAINSETUP =========================================================================================================================
@@ -297,6 +387,8 @@ rootElement.addEventListener("keyup", (keyboardEvent) => {
         }
     }
 
+    // the choiceSelected() function is only useful if the IAT class is awaiting for a response
+    // this means the user can press the keys during the break period and it won't do anything undesirable
     if (keyboardEvent.key === "e" || keyboardEvent.key === "i"){
         choiceSelected();
     }
