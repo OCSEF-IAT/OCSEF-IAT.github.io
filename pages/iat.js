@@ -76,7 +76,7 @@ let optionChosen = false;
 class IAT{
 
     constructor(prompt, sectionNumber, terms){
-        this.sectionPrompt = prompt; // (ex. Student & Negative)
+        this.sectionPrompt = prompt; // (ex. Student or Negative)
         this.terms = terms;
         this.section = sectionNumber;
         this.totalSections = 8;
@@ -190,7 +190,7 @@ function beginInstructions(){
         (userData.grade === 3) ? gradeLevel = "rd" : gradeLevel = "th";
 
         welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
-        acknowledgement.innerHTML = "The survey you have here does not collect any personal identifiers. Today, we want to test your reaction speed to a couple of questions; your answers are all anonymous. You may have negative answer choices to choose from, like as \"bad\" or \"gloomy.\" Some people may not like this.";
+        acknowledgement.innerHTML = "The survey you have here does not collect any personal identifiers. Today we will be providing a couple of questions where all of your answers will stay anonymous. You may have negative answer choices to choose from, like as \"bad\" or \"gloomy.\" Some people may not like this.";
     }
     
     survey.classList.add("content-gone");
@@ -292,35 +292,35 @@ async function startTest(){
     // Group all terms together and shuffle later
     let termGroups = [positiveTerms, negativeTerms, studentTerms, themTerms].flat();
 
-    const iatOne = new IAT('Student & Positive', 1, shuffleArray(termGroups));
+    const iatOne = new IAT('Student or Positive', 1, shuffleArray(termGroups));
     await iatOne.run();
     await iatOne.pause();
 
-    const iatTwo = new IAT('Student & Negative', 2, shuffleArray(termGroups));
+    const iatTwo = new IAT('Student or Negative', 2, shuffleArray(termGroups));
     await iatTwo.run();
     await iatTwo.pause();
 
-    const iatThr = new IAT('Student & Positive', 3, shuffleArray(termGroups));
+    const iatThr = new IAT('Student or Positive', 3, shuffleArray(termGroups));
     await iatThr.run();
     await iatThr.pause();
 
-    const iatFour = new IAT('Student & Negative', 4, shuffleArray(termGroups));
+    const iatFour = new IAT('Student or Negative', 4, shuffleArray(termGroups));
     await iatFour.run();
     await iatFour.pause();
 
-    const iatFive = new IAT('Student & Positive', 5, shuffleArray(termGroups));
+    const iatFive = new IAT('Student or Positive', 5, shuffleArray(termGroups));
     await iatFive.run();
     await iatFive.pause();
 
-    const iatSix = new IAT('Student & Negative', 6, shuffleArray(termGroups));
+    const iatSix = new IAT('Student or Negative', 6, shuffleArray(termGroups));
     await iatSix.run();
     await iatSix.pause();
 
-    const iatSeven = new IAT('Student & Positive', 7, shuffleArray(termGroups));
+    const iatSeven = new IAT('Student or Positive', 7, shuffleArray(termGroups));
     await iatSeven.run();
     await iatSeven.pause();
 
-    const iatEight = new IAT('Student & Negative', 8, shuffleArray(termGroups));
+    const iatEight = new IAT('Student or Negative', 8, shuffleArray(termGroups));
     await iatEight.run();
 
     userData.data = iatList; // adding the IAT data to the userData object
