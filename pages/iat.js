@@ -4,7 +4,9 @@ const rootElement = document.documentElement;
 const iat_container = document.getElementsByClassName("iat-container")[0];
 
 // IAT Instructions Screen
+const instructionsText = document.getElementsByClassName("instructions-text")[0];
 const instructions = document.getElementsByClassName("instructions")[0];
+
 const iat_agreement = document.getElementsByClassName("instructions-agreement-text")[0];
 
 // IAT Process
@@ -182,6 +184,10 @@ class IAT{
 function beginInstructions(){
     let survey = document.getElementsByClassName("user-survey")[0];
 
+    /*  Allow the user to see the introduction a little better 
+        By default the text is smaller to fit the second page better */
+    instructionsText.style.fontSize = "2.75vh";
+
     let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
     let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
 
@@ -190,8 +196,9 @@ function beginInstructions(){
         (userData.grade === 3) ? gradeLevel = "rd" : gradeLevel = "th";
 
         welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
-        acknowledgement.innerHTML = "The survey you have here does not collect any personal identifiers. Today we will be providing a couple of questions where all of your answers will stay anonymous. You may have negative answer choices to choose from, like as \"bad\" or \"gloomy.\" Some people may not like this.";
     }
+
+    acknowledgement.innerHTML = "The survey you are about to complete will not collect any personal information and all answers will be anonymous.";
     
     survey.classList.add("content-gone");
     instructions.classList.remove("content-gone");
@@ -201,11 +208,15 @@ function beginInstructions(){
 // Remove the welcome and acknowedgement text and reveal how to use the IAT
 function continueInstructions(){
     
+    instructionsText.style.fontSize = "2.25vh";
+
     let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
     let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
 
     let info = document.getElementsByClassName("instructions-info-text")[0];
     let example = document.getElementsByClassName("instructions-example-text content-gone")[0];
+
+    let keywords = document.getElementsByClassName("instructions-keywords")[0];
     let start = document.getElementsByClassName("instructions-start-text")[0];
 
     // Left choice and right choice buttons
@@ -218,6 +229,8 @@ function continueInstructions(){
 
     info.classList.remove("content-gone");
     example.classList.remove("content-gone");
+
+    keywords.classList.remove("content-gone");
     start.classList.remove("content-gone");
 
     left_choice_start.classList.add("fadeInStartIAT");
@@ -252,11 +265,13 @@ function choiceSelected() {
     return new Promise((resolve) => { 
         
       // we immediately return a Promise, however the await from the test function waits for resolve being called:
-      document.addEventListener('keydown', (e) => {
+      document.addEventListener('keydown', function resolveHandler(e){
         if (e.key === "e") {
+            document.removeEventListener('keydown', resolveHandler); // Unmount event listener after use
             resolve("e"); // Promise value
         }
         else if (e.key === "i"){
+            document.removeEventListener('keydown', resolveHandler); // Unmount event listener after use
             resolve("i"); // Promise value
         }
       });
@@ -410,8 +425,8 @@ rootElement.addEventListener("keyup", (keyboardEvent) => {
     }
 
     // the choiceSelected() function is only useful if the IAT class is awaiting for a response
-    // this means the user can press the keys during the break period and it won't do anything undesirable
-    if (keyboardEvent.key === "e" || keyboardEvent.key === "i"){
-        choiceSelected();
-    }
+    // // this means the user can press the keys during the break period and it won't do anything undesirable
+    // if (keyboardEvent.key === "e" || keyboardEvent.key === "i"){
+    //     choiceSelected();
+    // }
 })

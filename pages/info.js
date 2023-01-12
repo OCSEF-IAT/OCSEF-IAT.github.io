@@ -6,6 +6,12 @@ const userSurvey = document.getElementsByClassName("user-survey")[0];
 const teacher = document.getElementById("user-survey-relationship-teacher");
 const student = document.getElementById("user-survey-relationship-student");
 
+// Teacher Questions
+const teacherGradeOptions = document.getElementsByClassName("user-survey-teachergrade-option");
+const teacherClassOptions = document.getElementsByClassName("user-survey-teacherclass-option");
+const teacherGradesContainer = document.getElementsByClassName("user-survey-grade-teacher")[0];
+const teacherClassesContainer = document.getElementsByClassName("user-survey-classes-teacher")[0];
+
 // Student Questions
 const gradeOptions = document.getElementsByClassName("user-survey-grade-option");
 const classOptions = document.getElementsByClassName("user-survey-classes-option");
@@ -45,67 +51,153 @@ function animate(surveyContainer, add_or_remove){
     }
 }
 
+// Configure the grade choices
+class configure{
+        
+    // Options = the nodes that the user clicks
+    // Options_Container = the parent, which we use to animation the appearance or disappearance of a survey question
+    // SubsequentQuestion = this question specifically appears if grade 6 or higher
+    constructor(options, options_length, options_container, click, subsequentQuestion = null, subsequentQuestionParent = null){
+        // Debounce is used to prevent the user from spamming the choices and causing the animation to break
+        this.debounce = false;
+
+        this.options = options;
+        this.options_container = options_container;
+        this.options_length = options_length;
+        this.click = click;
+
+        this.subsequentQuestion = subsequentQuestion;
+        this.subsequentQuestionParent = subsequentQuestionParent;
+    }
+
+    // Add event listeners for all survey options
+    createEventListeners(){
+        
+        for (let option = 0; option < this.options_length; option += 1){
+
+            this.options[option].addEventListener("click", () => {
+                
+                // Check if the grade is greater than six, if so, then ask if they are in
+                // or teach honors/AP classes
+                let gradeValue = gradeOptions[option].innerHTML;
+
+                // Prevent spamming animation 
+                if (debounce === true){
+                    gradeOptions[option].style.cursor = "wait";
+        
+                    setTimeout(() => { gradeOptions[option].style.cursor = "pointer"; return; }, 500);
+                }
+                debounce = true;
+
+                // Add the clicked styling to the choice
+                setClick(this.options[option], this.options, this.click);
+
+                if (gradeValue >= 6){
+                    animate(this.options_container, true);
+        
+                    submission.classList.add("content-gone");
+                    submission.classList.remove("fadeIn");
+        
+                    // Allow selection after the animation ends
+                    setTimeout(() => {
+                        debounce = false;
+                    }, 500);
+                }
+                else{
+                    animate(this.options_container, false);
+                    animate(submission, true);
+        
+                    if (this.subsequentQuestionParent !== null){
+                        resetClick(this.subsequentQuestionParent, this.click);
+                    }
+        
+                    setTimeout(() => {
+                        classesContainer.classList.add("content-gone");
+                        debounce = false;
+                    }, 500);
+                }
+
+            });
+        }
+
+        // configure the subsequent question choices
+        for (let j = 0; j < this.subsequentQuestion.length; j += 1){
+            this.subsequentQuestion[j].addEventListener("click", () => {
+                
+                setClick(this.subsequentQuestion[j], this.subsequentQuestion, this.click);
+            
+                // Reveal Submission button
+                submission.classList.remove("content-gone");
+                submission.classList.add("fadeIn");
+            });
+        }
+    }
+}
+
 // CONFIGURATION =========================================================================================================================
 
-// Add event listeners for all survey options
-// Configure the grade choices
-// Debounce is used to prevent the user from spamming the choices and causing the animation to break
-let debounce = false;
-for (let option = 0; option < gradeOptions.length; option += 1){
+let m_student = new configure(gradeOptions, gradeOptions.length, gradesContainer, "user-survey-grade-selector-clicked", classOptions, classesContainer);
+m_student.createEventListeners();
 
-    // Gradeoptions event listeners
-    gradeOptions[option].addEventListener("click", () => {
+let m_teacher = new configure(teacherGradeOptions, teacherGradeOptions.length, teacherGradesContainer, "user-survey-teachergrade-selector-clicked", teacherClassOptions, teacherClassesContainer);
+m_teacher.createEventListeners();
+
+// let debounce = false;
+// for (let option = 0; option < gradeOptions.length; option += 1){
+
+//     // Gradeoptions event listeners
+//     gradeOptions[option].addEventListener("click", () => {
         
-        // Check if the grade is greater than six, if so, then ask if they are in
-        // honors or AP classes
-        let gradeValue = gradeOptions[option].innerHTML;
+//         // Check if the grade is greater than six, if so, then ask if they are in
+//         // honors or AP classes
+//         let gradeValue = gradeOptions[option].innerHTML;
         
-        if (debounce === true){
-            gradeOptions[option].style.cursor = "wait";
+//         if (debounce === true){
+//             gradeOptions[option].style.cursor = "wait";
 
-            setTimeout(() => { gradeOptions[option].style.cursor = "pointer"; return; }, 500);
-        }
-        debounce = true;
+//             setTimeout(() => { gradeOptions[option].style.cursor = "pointer"; return; }, 500);
+//         }
+//         debounce = true;
 
-        // Add the clicked styling to the choice
-        setClick(gradeOptions[option], gradeOptions, "user-survey-grade-selector-clicked");
+//         // Add the clicked styling to the choice
+//         setClick(gradeOptions[option], gradeOptions, "user-survey-grade-selector-clicked");
 
-        if (gradeValue >= 6){
-            animate(classesContainer, true);
+//         if (gradeValue >= 6){
+//             animate(classesContainer, true);
 
-            submission.classList.add("content-gone");
-            submission.classList.remove("fadeIn");
+//             submission.classList.add("content-gone");
+//             submission.classList.remove("fadeIn");
 
-            // Allow selection after the animation ends
-            setTimeout(() => {
-                debounce = false;
-            }, 500);
-        }
-        else{
-            animate(classesContainer, false);
-            animate(submission, true);
+//             // Allow selection after the animation ends
+//             setTimeout(() => {
+//                 debounce = false;
+//             }, 500);
+//         }
+//         else{
+//             animate(classesContainer, false);
+//             animate(submission, true);
 
-            resetClick(classOptions, "user-survey-classes-selector-clicked");
+//             resetClick(classOptions, "user-survey-classes-selector-clicked");
 
-            setTimeout(() => {
-                classesContainer.classList.add("content-gone");
-                debounce = false;
-            }, 500);
-        }
-    });
-}
+//             setTimeout(() => {
+//                 classesContainer.classList.add("content-gone");
+//                 debounce = false;
+//             }, 500);
+//         }
+//     });
+// }
 
-// configure the class choices
-for (let j = 0; j < classOptions.length; j += 1){
-    classOptions[j].addEventListener("click", () => {
+// // configure the class choices
+// for (let j = 0; j < classOptions.length; j += 1){
+//     classOptions[j].addEventListener("click", () => {
         
-        setClick(classOptions[j], classOptions, "user-survey-classes-selector-clicked");
+//         setClick(classOptions[j], classOptions, "user-survey-classes-selector-clicked");
 
-        // Reveal Submission button
-        submission.classList.remove("content-gone");
-        submission.classList.add("fadeIn");
-    });
-}
+//         // Reveal Submission button
+//         submission.classList.remove("content-gone");
+//         submission.classList.add("fadeIn");
+//     });
+// }
 
 // MAINSETUP =========================================================================================================================
 
