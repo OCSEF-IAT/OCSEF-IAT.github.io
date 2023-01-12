@@ -71,6 +71,7 @@ class configure{
     }
 
     // Add event listeners for all survey options
+    // Create debounce to prevent animation spam
     createEventListeners(){
         
         for (let option = 0; option < this.options_length; option += 1){
@@ -82,29 +83,29 @@ class configure{
                 let gradeValue = gradeOptions[option].innerHTML;
 
                 // Prevent spamming animation 
-                if (debounce === true){
+                if (this.debounce === true){
                     gradeOptions[option].style.cursor = "wait";
         
                     setTimeout(() => { gradeOptions[option].style.cursor = "pointer"; return; }, 500);
                 }
-                debounce = true;
+                this.debounce = true;
 
                 // Add the clicked styling to the choice
                 setClick(this.options[option], this.options, this.click);
 
                 if (gradeValue >= 6){
-                    animate(this.options_container, true);
+                    animate(this.subsequentQuestionParent, true);
         
                     submission.classList.add("content-gone");
                     submission.classList.remove("fadeIn");
         
                     // Allow selection after the animation ends
                     setTimeout(() => {
-                        debounce = false;
+                        this.debounce = false;
                     }, 500);
                 }
                 else{
-                    animate(this.options_container, false);
+                    animate(this.subsequentQuestionParent, false);
                     animate(submission, true);
         
                     if (this.subsequentQuestionParent !== null){
@@ -113,7 +114,7 @@ class configure{
         
                     setTimeout(() => {
                         classesContainer.classList.add("content-gone");
-                        debounce = false;
+                        this.debounce = false;
                     }, 500);
                 }
 
@@ -139,7 +140,7 @@ class configure{
 let m_student = new configure(gradeOptions, gradeOptions.length, gradesContainer, "user-survey-grade-selector-clicked", classOptions, classesContainer);
 m_student.createEventListeners();
 
-let m_teacher = new configure(teacherGradeOptions, teacherGradeOptions.length, teacherGradesContainer, "user-survey-teachergrade-selector-clicked", teacherClassOptions, teacherClassesContainer);
+let m_teacher = new configure(teacherGradeOptions, teacherGradeOptions.length, teacherGradesContainer, "user-survey-grade-selector-clicked", teacherClassOptions, teacherClassesContainer);
 m_teacher.createEventListeners();
 
 // let debounce = false;
@@ -204,11 +205,10 @@ m_teacher.createEventListeners();
 let teacherClicked = false;
 let studentClicked = false;
 
+// Add teacher questions appearing =================================
 teacher.addEventListener("click", () => {
 
-    if (teacherClicked === true){
-        return;
-    }
+    if (teacherClicked === true) return; 
 
     teacherClicked = true;
     studentClicked = false;
@@ -233,9 +233,7 @@ teacher.addEventListener("click", () => {
 
 student.addEventListener("click", () => {
 
-    if (studentClicked === true){
-        return;
-    }
+    if (studentClicked === true) return;
 
     studentClicked = true;
     teacherClicked = false;

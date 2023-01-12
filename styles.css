@@ -39,6 +39,40 @@ body{
     display: none !important;
 }
 
+.no-mobile{
+    display: none;
+}
+
+/* Prevent users that use mobile devices from taking the IAT */
+@media (max-width: 600px){
+
+    :is(.start-container){
+        display: none !important;
+    }
+
+    .no-mobile{
+        min-height: calc(100vh - var(--navigation-height));
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .no-mobile-content{
+        max-width: 80vw;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 5vh;
+        text-align: center;
+    }
+
+    .no-mobile h1{
+        font-size: 7vh;
+    }
+}
+
 /* ====================================================================================================================================== */
 /* Animations */
 
