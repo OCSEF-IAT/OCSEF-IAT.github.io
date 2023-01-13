@@ -380,7 +380,7 @@ body{
     flex-direction: column;
 
     width: var(--instructions-content-width);
-    font-size: 2.25vh;
+    font-size: 2.75vh;
 }
 
 .hotkeys-info, .bold{

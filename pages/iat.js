@@ -1,30 +1,50 @@
 // VARIABLES =========================================================================================================================
 
-const rootElement = document.documentElement;
-const iat_container = document.getElementsByClassName("iat-container")[0];
+// Body and Root Variables
+const body = {
+    rootElement: document.documentElement,
+    iat_container: document.getElementsByClassName("iat-container")[0]
+}
 
-// IAT Instructions Screen
-const instructionsText = document.getElementsByClassName("instructions-text")[0];
-const instructions = document.getElementsByClassName("instructions")[0];
+// All Variables for instruction
+const instructions = {
+    instructionsClass: document.getElementsByClassName("instructions")[0],
+    
+    instructionsText: {
+        instructionsTextContainer: document.getElementsByClassName("instructions-text")[0],
 
-const iat_agreement = document.getElementsByClassName("instructions-agreement-text")[0];
+        welcome: document.getElementsByClassName("instructions-welcome-text")[0],
+        acknowledgement: document.getElementsByClassName("instructions-acknowledgement-text")[0],
+        info: document.getElementsByClassName("instructions-info-text")[0],
+        example: document.getElementsByClassName("instructions-example-text content-gone")[0],
+    
+        keywords: document.getElementsByClassName("instructions-keywords")[0]
+    },
 
-// IAT Process
-const iat_questions = document.getElementsByClassName("iat-questions")[0];
-const question_section = document.getElementsByClassName("question-section")[0];
-const section_name = document.getElementsByClassName("question-section-name")[0];
-const question_word = document.getElementsByClassName("question-word")[0];
+    // When you're ready press ENTER to Continue
+    start: document.getElementsByClassName("instructions-start-text")[0]
+}
 
-// IAT Breather Screen
-const iat_breather = document.getElementsByClassName("iat-breather")[0];
-const iat_breather_img = document.getElementById("iat-breather-image");
-const iat_breather_message = document.getElementsByClassName("iat-breather-message")[0];
-const iat_breather_timer = document.getElementsByClassName("iat-breather-timer")[0];
+const iatProcess = {
+    iat_agreement: document.getElementsByClassName("instructions-agreement-text")[0],
 
-// Survey Submission
-const _submission = document.getElementsByClassName("user-survey-submission")[0];
+    iat_questions: document.getElementsByClassName("iat-questions")[0],
+    question_section: document.getElementsByClassName("question-section")[0],
+    section_name: document.getElementsByClassName("question-section-name")[0],
+    question_word: document.getElementsByClassName("question-word")[0],
 
-_submission.addEventListener("click", () => {
+    // IAT Breather Section
+    breather: {
+        iat_breather: document.getElementsByClassName("iat-breather")[0],
+        iat_breather_img: document.getElementsByClassName("iat-breather-image")[0],
+        iat_breather_message: document.getElementsByClassName("iat-breather-message")[0],
+        iat_breather_timer: document.getElementsByClassName("iat-breather-timer")[0]
+    },
+
+    submission: document.getElementsByClassName("user-survey-submission")[0]
+}
+
+iatProcess.submission.addEventListener("click", () => {
     storeSurveyData();
 });
 
@@ -88,18 +108,18 @@ class IAT{
 
     async run(){
 
-        section_name.innerHTML = "Current Section: " + "<strong>" + this.sectionPrompt + "</strong>";
-        question_section.innerHTML = "Section " + this.section + " of " + this.totalSections;
+        iatProcess.section_name.innerHTML = "Current Section: " + "<strong>" + this.sectionPrompt + "</strong>";
+        iatProcess.question_section.innerHTML = "Section " + this.section + " of " + this.totalSections;
 
         for (let i = 0; i < this.terms.length; i++){
             
-            question_word.innerHTML = this.terms[i];
+            iatProcess.question_word.innerHTML = this.terms[i];
 
             // Reset animation as new words are being displayed to the user            
-            question_word.classList.add("fade-in-iat-question");
+            iatProcess.question_word.classList.add("fade-in-iat-question");
 
             setTimeout(() => {
-                question_word.classList.remove("fade-in-iat-question");
+                iatProcess.question_word.classList.remove("fade-in-iat-question");
             }, 150);
             
             let start = Date.now(); // Get the current time
@@ -123,34 +143,34 @@ class IAT{
         let catImage = await this.getCatImage();
         
         // Hide the question section and show a break screen
-        iat_breather.classList.remove("content-gone");
-        iat_breather.classList.add("fadeInBreather");
+        iatProcess.breather.iat_breather.classList.remove("content-gone");
+        iatProcess.breather.iat_breather.classList.add("fadeInBreather");
 
-        iat_questions.classList.add("content-gone"); 
+        iatProcess.iat_questions.classList.add("content-gone"); 
         
-        iat_breather_img.src = catImage[0].url; // [0] is the promise result
-        iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
+        iatProcess.breather.iat_breather_img.src = catImage[0].url; // [0] is the promise result
+        iatProcess.breather.iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
 
 
         const timer = setInterval(() => {
             this.timeCounter -= 1;
-            iat_breather_timer.innerHTML = "<strong>You're on break for " + this.timeCounter + " seconds!</strong>";
+            iatProcess.breather.iat_breather_timer.innerHTML = "<strong>You're on break for " + this.timeCounter + " seconds!</strong>";
         }, 1000)
 
         // Once a promise is returned, continue the IAT process (after 5 seconds)
         // Because of this, we do not need a continue button
         return new Promise((resolve) => { 
             setTimeout(() => {
-                iat_breather.classList.remove("fadeInBreather");
-                iat_breather.classList.add("content-gone");
+                iatProcess.breather.iat_breather.classList.remove("fadeInBreather");
+                iatProcess.breather.iat_breather.classList.add("content-gone");
 
-                iat_questions.classList.remove("content-gone");
+                iatProcess.iat_questions.classList.remove("content-gone");
 
                 // Stop the timer
                 clearInterval(timer);
 
                 this.timeCounter = 5; // reset class variable (all classes use the same instance value)
-                iat_breather_timer.innerHTML = "<strong>You're on break for " + "5" + " seconds!</strong>";
+                iatProcess.breather.iat_breather_timer.innerHTML = "<strong>You're on break for " + "5" + " seconds!</strong>";
 
                 // End the promise so the IAT process can continue
                 resolve();
@@ -184,54 +204,38 @@ class IAT{
 function beginInstructions(){
     let survey = document.getElementsByClassName("user-survey")[0];
 
-    /*  Allow the user to see the introduction a little better 
-        By default the text is smaller to fit the second page better */
-    instructionsText.style.fontSize = "2.75vh";
-
-    let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
-    let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
-
     if (userData.relationship === "Student"){
         let gradeLevel;
         (userData.grade === 3) ? gradeLevel = "rd" : gradeLevel = "th";
 
-        welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
+        instructions.instructionsText.welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
     }
 
-    acknowledgement.innerHTML = "The survey you are about to complete will not collect any personal information and all answers will be anonymous.";
+    instructions.instructionsText.acknowledgement.innerHTML = "The survey you are about to complete will not collect any personal information and all answers will be anonymous.";
     
     survey.classList.add("content-gone");
-    instructions.classList.remove("content-gone");
+    instructions.instructionsClass.classList.remove("content-gone");
 
 }
 
 // Remove the welcome and acknowedgement text and reveal how to use the IAT
 function continueInstructions(){
-    
-    instructionsText.style.fontSize = "2.25vh";
-
-    let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
-    let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
-
-    let info = document.getElementsByClassName("instructions-info-text")[0];
-    let example = document.getElementsByClassName("instructions-example-text content-gone")[0];
-
-    let keywords = document.getElementsByClassName("instructions-keywords")[0];
-    let start = document.getElementsByClassName("instructions-start-text")[0];
 
     // Left choice and right choice buttons
     let left_choice_start = document.getElementsByClassName("left-choice")[0];
     let right_choice_start = document.getElementsByClassName("right-choice")[0];
 
-    welcome.classList.add("content-gone");
-    acknowledgement.classList.add("content-gone");
-    iat_agreement.classList.add("content-gone");
+    instructions.instructionsText.welcome.classList.add("content-gone");
+    instructions.instructionsText.acknowledgement.classList.add("content-gone");
+    iatProcess.iat_agreement.classList.add("content-gone");
 
-    info.classList.remove("content-gone");
-    example.classList.remove("content-gone");
+    instructions.instructionsText.info.classList.remove("content-gone");
+    instructions.instructionsText.info.innerHTML = "In the following test, you will be asked to <span class=\"underline\">sort words with each other</span> with the following keys:<br><span class=\"hotkeys-info\">[I] = Included Yes, [E] = Excluded No</span>";
 
-    keywords.classList.remove("content-gone");
-    start.classList.remove("content-gone");
+    instructions.instructionsText.example.classList.remove("content-gone");
+
+    instructions.instructionsText.keywords.classList.remove("content-gone");
+    instructions.start.classList.remove("content-gone");
 
     left_choice_start.classList.add("fadeInStartIAT");
     right_choice_start.classList.add("fadeInStartIAT");
@@ -282,8 +286,8 @@ function choiceSelected() {
 // We want the terms to be jumbled up together randomly so we use randomArray() function 
 async function startTest(){
     // Start the IAT process
-    iat_questions.classList.remove("content-gone");
-    instructions.classList.add("content-gone");
+    iatProcess.iat_questions.classList.remove("content-gone");
+    instructions.instructionsClass.classList.add("content-gone");
 
     // Set terms based on whether the user is a student or a teacher
     let positiveTerms;
@@ -349,7 +353,7 @@ async function endTest(){
 
     let iat_quote_container = document.getElementsByClassName("iat-finish-inspirational-quote-container")[0];
 
-    iat_questions.classList.add("content-gone");
+    iatProcess.iat_questions.classList.add("content-gone");
     iat_finish.classList.remove("content-gone");
 
     iat_finish.classList.add("fadeIn");
@@ -400,7 +404,7 @@ let metInstructions = false;
 let startedTest = false;
 let agreeTerms = false;
 
-rootElement.addEventListener("keyup", (keyboardEvent) => {
+body.rootElement.addEventListener("keyup", (keyboardEvent) => {
 
     // Check if the user has completed the user survey (all surveys have a relationship property)
     (userData.hasOwnProperty("relationship"))? metInstructions = true : metInstructions = false;
@@ -423,10 +427,4 @@ rootElement.addEventListener("keyup", (keyboardEvent) => {
             startedTest = true;
         }
     }
-
-    // the choiceSelected() function is only useful if the IAT class is awaiting for a response
-    // // this means the user can press the keys during the break period and it won't do anything undesirable
-    // if (keyboardEvent.key === "e" || keyboardEvent.key === "i"){
-    //     choiceSelected();
-    // }
 })
