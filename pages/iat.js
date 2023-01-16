@@ -44,49 +44,63 @@ const iatProcess = {
     submission: document.getElementsByClassName("user-survey-submission")[0]
 }
 
+// Basic DOM Elements to read survey data from the user and store into the userData object
+const userSurveySubmit = {
+    teacher: {
+        teacherButton: document.getElementById("user-survey-relationship-teacher"),
+
+        gradeOptions: document.getElementsByClassName("user-survey-teacher-grade-option"),
+        classOptions: document.getElementsByClassName("user-survey-teacher-class-option")
+    },
+
+    student: {
+        studentButton: document.getElementById("user-survey-relationship-student"),
+
+        gradeOptions: document.getElementsByClassName("user-survey-grade-option"),
+        classOptions: document.getElementsByClassName("user-survey-classes-option")
+    }
+}
+
+// GRAB USER SURVEY DATA =============================================================================================================
+
+// Submission button for the user survey to finish 
 iatProcess.submission.addEventListener("click", () => {
     storeSurveyData();
 });
-
-// GRAB USER SURVEY DATA =============================================================================================================
 
 // This is where all the iatData will go. It will be sent to the database at the end of the test
 let userData = {};
 
 function storeSurveyData(){
-    // We get this data to store later with the IAT reaction times
-    // Student or Teacher
-    const _teacher = document.getElementById("user-survey-relationship-teacher");
-    const _student = document.getElementById("user-survey-relationship-student");
-
-    // User Survey Options for Student
-    const _gradeOptions = document.getElementsByClassName("user-survey-grade-option");
-    const _classOptions = document.getElementsByClassName("user-survey-classes-option");
-
     // Check if the user is a teacher or student
-    (_teacher.classList.contains("user-survey-selector-clicked")) ? userData.relationship = "Teacher" : userData.relationship = "Student";
+    const isTeacher = userSurveySubmit.teacher.teacherButton.classList.contains("user-survey-selector-clicked");
+    (isTeacher)? userData.relationship = "Teacher": userData.relationship = "Student";
 
-    // Get the index for the grade and class choice that the student clicks 
-    for (let option = 0; option < _gradeOptions.length; option += 1){
-        if (_gradeOptions[option].classList.contains("user-survey-selector-clicked")){
-
-            // Add the grade to the userData object
-            userData.grade = parseInt(_gradeOptions[option].innerHTML);
-        }
-    }
-
-    for (let option = 0; option < _classOptions.length; option += 1){
-        if (_classOptions[option].classList.contains("user-survey-selector-clicked")){
-
-            // Add the class to the userData object
-            userData.classesAdvanced = parseInt(_classOptions[option].innerHTML);
-        }
-    }
-
-    // console.log(userData);
+    if (isTeacher === true) teacherStudentHandler(userSurveySubmit.teacher.gradeOptions, userSurveySubmit.teacher.classOptions);
+    if (isTeacher === false) teacherStudentHandler(userSurveySubmit.student.gradeOptions, userSurveySubmit.student.classOptions);
 
     // Start the IAT instructions and process
     beginInstructions();
+
+    function teacherStudentHandler(gradeOptions, classOptions){
+        // Get the index for the grade and class choice that the student clicks 
+        for (let option = 0; option < gradeOptions.length; option += 1){
+            if (gradeOptions[option].classList.contains("user-survey-selector-clicked")){
+
+                // Add the grade to the userData object
+                userData.grade = parseInt(gradeOptions[option].innerHTML);
+            }
+        }
+
+        for (let option = 0; option < classOptions.length; option += 1){
+            if (classOptions[option].classList.contains("user-survey-selector-clicked")){
+
+                // Add the class to the userData object
+                userData.classesAdvanced = classOptions[option].innerHTML;
+            }
+        }
+    }
+
 }
 
 // IAT CLASS =========================================================================================================================
@@ -98,7 +112,7 @@ let optionChosen = false;
 class IAT{
 
     constructor(prompt, sectionNumber, terms){
-        this.sectionPrompt = prompt; // (ex. Student or Negative)
+        this.sectionPrompt = prompt; // (ex. Negative)
         this.terms = terms;
         this.section = sectionNumber;
         this.totalSections = 8;
@@ -148,9 +162,17 @@ class IAT{
 
         iatProcess.iat_questions.classList.add("content-gone"); 
         
-        iatProcess.breather.iat_breather_img.src = catImage[0].url; // [0] is the promise result
-
-        iatProcess.breather.iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
+        // Display the cat image and a message to the user
+        // We have a try/catch in case the cat api refuses our GET Request
+        try{
+            iatProcess.breather.iat_breather_img.src = catImage[0].url; // [0] is the promise result
+        }
+        catch (error){
+            console.log(error);
+        }
+        finally{
+            iatProcess.breather.iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
+        }
 
 
         const timer = setInterval(() => {
@@ -211,6 +233,9 @@ function beginInstructions(){
 
         instructions.instructionsText.welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
     }
+    else{
+        instructions.instructionsText.welcome.innerHTML = "Welcome, " + userData.relationship + "!";
+    }
 
     instructions.instructionsText.acknowledgement.innerHTML = "The survey you are about to complete will not collect any personal information and all answers will be anonymous.";
     
@@ -222,24 +247,26 @@ function beginInstructions(){
 // Remove the welcome and acknowedgement text and reveal how to use the IAT
 function continueInstructions(){
 
-    // Left choice and right choice buttons
-    let left_choice_start = document.getElementsByClassName("left-choice")[0];
-    let right_choice_start = document.getElementsByClassName("right-choice")[0];
-
+    // Hide the welcome and acknowledgement text
     instructions.instructionsText.welcome.classList.add("content-gone");
     instructions.instructionsText.acknowledgement.classList.add("content-gone");
     iatProcess.iat_agreement.classList.add("content-gone");
 
+    // Show the instructions
     instructions.instructionsText.info.classList.remove("content-gone");
     instructions.instructionsText.info.innerHTML = "In the following test, you will be asked to <span class=\"underline\">sort words with each other</span> with the following keys:<br><span class=\"hotkeys-info\">[I] = Included Yes, [E] = Excluded No</span>";
-
+    
     instructions.instructionsText.example.classList.remove("content-gone");
+    
+    // Give teacher instructions if the user is a teacher
+    if (userData.relationship === "Teacher"){
+        instructions.instructionsText.example.innerHTML = "<span class=\"bold\">For Example:</span><br><br>The category is <span class=\"bold\">Positive Words</span>. When the word \"Studious\" appears, you press <span class=\"hotkeys-info\">[I]</span> because \"Studious\" is a <span class=\"bold\">Positive Word</span><br><br>The category is <span class=\"bold\">Negative Words</span>. When the word \"Lazy\" appears, you press <span class=\"hotkeys-info\">[E]</span> because \"Lazy\" is a <span class=\"bold\">Negative Word</span>";
+    }
 
     instructions.instructionsText.keywords.classList.remove("content-gone");
+    
+    
     instructions.start.classList.remove("content-gone");
-
-    left_choice_start.classList.add("fadeInStartIAT");
-    right_choice_start.classList.add("fadeInStartIAT");
 }
 
 // Fisher-Yates Shuffle: https://bost.ocks.org/mike/shuffle/
@@ -290,57 +317,58 @@ async function startTest(){
     iatProcess.iat_questions.classList.remove("content-gone");
     instructions.instructionsClass.classList.add("content-gone");
 
+    // Left choice and right choice buttons for the iatProcess
+    let leftChoice = document.getElementsByClassName("left-choice")[0];
+    let rightChoice = document.getElementsByClassName("right-choice")[0];
+
+    leftChoice.classList.add("fadeInStartIAT");
+    rightChoice.classList.add("fadeInStartIAT");
+
     // Set terms based on whether the user is a student or a teacher
     let positiveTerms;
     let negativeTerms;
-    let studentTerms;
-    let themTerms;
 
     if (userData.relationship === "Student"){
         positiveTerms = ["Joyful", "Happy", "Content", "Cheerful"];
         negativeTerms = ["Miserable", "Sad", "Gloomy", "Depressed"];
-        studentTerms  = ["Me", "Self", "I", "My"];
-        themTerms     = ["Them", "Other", "Him", "Her"];
     }
     else if (userData.relationship === "Teacher"){
         positiveTerms = ["Motivated", "Studious", "Competent", "Collaborative"];
         negativeTerms = ["Disruptive", "Lazy", "Cheaters", "Irresponsible"];
-        studentTerms  = ["Pupil", "Learner"];
-        themTerms     = ["Them", "Other"];
     }
 
     // Group all terms together and shuffle later
-    let termGroups = [positiveTerms, negativeTerms, studentTerms, themTerms].flat();
+    let termGroups = [positiveTerms, negativeTerms].flat();
 
-    const iatOne = new IAT('Student or Positive', 1, shuffleArray(termGroups));
+    const iatOne = new IAT('Positive Words', 1, shuffleArray(termGroups));
     await iatOne.run();
     await iatOne.pause();
 
-    const iatTwo = new IAT('Student or Negative', 2, shuffleArray(termGroups));
+    const iatTwo = new IAT('Negative Words', 2, shuffleArray(termGroups));
     await iatTwo.run();
     await iatTwo.pause();
 
-    const iatThr = new IAT('Student or Positive', 3, shuffleArray(termGroups));
+    const iatThr = new IAT('Positive Words', 3, shuffleArray(termGroups));
     await iatThr.run();
     await iatThr.pause();
 
-    const iatFour = new IAT('Student or Negative', 4, shuffleArray(termGroups));
+    const iatFour = new IAT('Negative Words', 4, shuffleArray(termGroups));
     await iatFour.run();
     await iatFour.pause();
 
-    const iatFive = new IAT('Student or Positive', 5, shuffleArray(termGroups));
+    const iatFive = new IAT('Positive Words', 5, shuffleArray(termGroups));
     await iatFive.run();
     await iatFive.pause();
 
-    const iatSix = new IAT('Student or Negative', 6, shuffleArray(termGroups));
+    const iatSix = new IAT('Negative Words', 6, shuffleArray(termGroups));
     await iatSix.run();
     await iatSix.pause();
 
-    const iatSeven = new IAT('Student or Positive', 7, shuffleArray(termGroups));
+    const iatSeven = new IAT('Positive Words', 7, shuffleArray(termGroups));
     await iatSeven.run();
     await iatSeven.pause();
 
-    const iatEight = new IAT('Student or Negative', 8, shuffleArray(termGroups));
+    const iatEight = new IAT('Negative Words', 8, shuffleArray(termGroups));
     await iatEight.run();
 
     userData.data = iatList; // adding the IAT data to the userData object
@@ -356,7 +384,6 @@ async function endTest(){
 
     iatProcess.iat_questions.classList.add("content-gone");
     iat_finish.classList.remove("content-gone");
-
     iat_finish.classList.add("fadeIn");
 
     // Get a random quote from the list of quotes (no-cors mode is used in the GET Request to bypass CORS)
@@ -373,9 +400,12 @@ async function endTest(){
     catch(err){
         console.log(err);
     }
+    finally{
+        // Send the data to the server
+        postRequestData();
 
-    // Send the data to the server
-    postRequestData();
+        console.log("Hang on tight. Sending POST Request to server...");
+    }
 
     // Offically close the startTest() function
     return new Promise((resolve) => { resolve(); });
@@ -393,7 +423,7 @@ async function postRequestData(){
         },
         body: JSON.stringify(userData)
     });
-    console.log(response.json().message); // Get response from server and convert to JS Object
+    console.log(response.json()); // Get response from server and convert to JS Object
 }
 
 // MAINSETUP =========================================================================================================================
