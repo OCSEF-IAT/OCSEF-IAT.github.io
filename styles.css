@@ -318,7 +318,7 @@ body{
     transition: 250ms ease;
 }
 
-.user-survey-grade-selector-clicked, .user-survey-classes-selector-clicked, .user-survey-teacher-grade-selector-clicked, .user-survey-teacher-class-selector-clicked{
+.user-survey-selector-clicked{
     background: var(--primary-color);
     color: white !important;
 }
@@ -380,12 +380,12 @@ body{
     flex-direction: column;
 
     width: var(--instructions-content-width);
-    font-size: 2.25vh;
+    font-size: 2.4vh;
 }
 
 .hotkeys-info, .bold{
     font-weight: 600;
-    font-style: italic;
+    /* font-style: italic; */
 }
 
 .underline{    
@@ -500,14 +500,14 @@ body{
     align-items: center;
 }
 
-.question-metadata > p, .question-word{
+.question-metadata > p{
     text-align: center;
     font-size: 3.25vh;
 }
 
 .question-word{
     color: var(--primary-color);
-    font-size: 3.75vh;
+    font-size: 4vh;
 }
 
 /* ====================================================================================================================================== */

@@ -1,72 +1,106 @@
 // VARIABLES =========================================================================================================================
 
-const rootElement = document.documentElement;
-const iat_container = document.getElementsByClassName("iat-container")[0];
+// Body and Root Variables
+const body = {
+    rootElement: document.documentElement,
+    iat_container: document.getElementsByClassName("iat-container")[0]
+}
 
-// IAT Instructions Screen
-const instructionsText = document.getElementsByClassName("instructions-text")[0];
-const instructions = document.getElementsByClassName("instructions")[0];
+// All Variables for instruction
+const instructions = {
+    instructionsClass: document.getElementsByClassName("instructions")[0],
+    
+    instructionsText: {
+        instructionsTextContainer: document.getElementsByClassName("instructions-text")[0],
 
-const iat_agreement = document.getElementsByClassName("instructions-agreement-text")[0];
+        welcome: document.getElementsByClassName("instructions-welcome-text")[0],
+        acknowledgement: document.getElementsByClassName("instructions-acknowledgement-text")[0],
+        info: document.getElementsByClassName("instructions-info-text")[0],
+        example: document.getElementsByClassName("instructions-example-text content-gone")[0],
+    
+        keywords: document.getElementsByClassName("instructions-keywords")[0]
+    },
 
-// IAT Process
-const iat_questions = document.getElementsByClassName("iat-questions")[0];
-const question_section = document.getElementsByClassName("question-section")[0];
-const section_name = document.getElementsByClassName("question-section-name")[0];
-const question_word = document.getElementsByClassName("question-word")[0];
+    // When you're ready press ENTER to Continue
+    start: document.getElementsByClassName("instructions-start-text")[0]
+}
 
-// IAT Breather Screen
-const iat_breather = document.getElementsByClassName("iat-breather")[0];
-const iat_breather_img = document.getElementById("iat-breather-image");
-const iat_breather_message = document.getElementsByClassName("iat-breather-message")[0];
-const iat_breather_timer = document.getElementsByClassName("iat-breather-timer")[0];
+const iatProcess = {
+    iat_agreement: document.getElementsByClassName("instructions-agreement-text")[0],
 
-// Survey Submission
-const _submission = document.getElementsByClassName("user-survey-submission")[0];
+    iat_questions: document.getElementsByClassName("iat-questions")[0],
+    question_section: document.getElementsByClassName("question-section")[0],
+    section_name: document.getElementsByClassName("question-section-name")[0],
+    question_word: document.getElementsByClassName("question-word")[0],
 
-_submission.addEventListener("click", () => {
-    storeSurveyData();
-});
+    // IAT Breather Section
+    breather: {
+        iat_breather: document.getElementsByClassName("iat-breather")[0],
+        iat_breather_img: document.getElementById("iat-breather-image"),
+        iat_breather_message: document.getElementsByClassName("iat-breather-message")[0],
+        iat_breather_timer: document.getElementsByClassName("iat-breather-timer")[0]
+    },
+
+    submission: document.getElementsByClassName("user-survey-submission")[0]
+}
+
+// Basic DOM Elements to read survey data from the user and store into the userData object
+const userSurveySubmit = {
+    teacher: {
+        teacherButton: document.getElementById("user-survey-relationship-teacher"),
+
+        gradeOptions: document.getElementsByClassName("user-survey-teacher-grade-option"),
+        classOptions: document.getElementsByClassName("user-survey-teacher-class-option")
+    },
+
+    student: {
+        studentButton: document.getElementById("user-survey-relationship-student"),
+
+        gradeOptions: document.getElementsByClassName("user-survey-grade-option"),
+        classOptions: document.getElementsByClassName("user-survey-classes-option")
+    }
+}
 
 // GRAB USER SURVEY DATA =============================================================================================================
+
+// Submission button for the user survey to finish 
+iatProcess.submission.addEventListener("click", () => {
+    storeSurveyData();
+});
 
 // This is where all the iatData will go. It will be sent to the database at the end of the test
 let userData = {};
 
 function storeSurveyData(){
-    // We get this data to store later with the IAT reaction times
-    // Student or Teacher
-    const _teacher = document.getElementById("user-survey-relationship-teacher");
-    const _student = document.getElementById("user-survey-relationship-student");
-
-    // User Survey Options for Student
-    const _gradeOptions = document.getElementsByClassName("user-survey-grade-option");
-    const _classOptions = document.getElementsByClassName("user-survey-classes-option");
-
     // Check if the user is a teacher or student
-    (_teacher.classList.contains("user-survey-relationship-selector-clicked")) ? userData.relationship = "Teacher" : userData.relationship = "Student";
+    const isTeacher = userSurveySubmit.teacher.teacherButton.classList.contains("user-survey-selector-clicked");
+    (isTeacher)? userData.relationship = "Teacher": userData.relationship = "Student";
 
-    // Get the index for the grade and class choice that the student clicks 
-    for (let option = 0; option < _gradeOptions.length; option += 1){
-        if (_gradeOptions[option].classList.contains("user-survey-grade-selector-clicked")){
-
-            // Add the grade to the userData object
-            userData.grade = parseInt(_gradeOptions[option].innerHTML);
-        }
-    }
-
-    for (let option = 0; option < _classOptions.length; option += 1){
-        if (_classOptions[option].classList.contains("user-survey-classes-selector-clicked")){
-
-            // Add the class to the userData object
-            userData.classesAdvanced = parseInt(_classOptions[option].innerHTML);
-        }
-    }
-
-    // console.log(userData);
+    if (isTeacher === true) teacherStudentHandler(userSurveySubmit.teacher.gradeOptions, userSurveySubmit.teacher.classOptions);
+    if (isTeacher === false) teacherStudentHandler(userSurveySubmit.student.gradeOptions, userSurveySubmit.student.classOptions);
 
     // Start the IAT instructions and process
     beginInstructions();
+
+    function teacherStudentHandler(gradeOptions, classOptions){
+        // Get the index for the grade and class choice that the student clicks 
+        for (let option = 0; option < gradeOptions.length; option += 1){
+            if (gradeOptions[option].classList.contains("user-survey-selector-clicked")){
+
+                // Add the grade to the userData object
+                userData.grade = parseInt(gradeOptions[option].innerHTML);
+            }
+        }
+
+        for (let option = 0; option < classOptions.length; option += 1){
+            if (classOptions[option].classList.contains("user-survey-selector-clicked")){
+
+                // Add the class to the userData object
+                userData.classesAdvanced = classOptions[option].innerHTML;
+            }
+        }
+    }
+
 }
 
 // IAT CLASS =========================================================================================================================
@@ -78,7 +112,7 @@ let optionChosen = false;
 class IAT{
 
     constructor(prompt, sectionNumber, terms){
-        this.sectionPrompt = prompt; // (ex. Student or Negative)
+        this.sectionPrompt = prompt; // (ex. Negative)
         this.terms = terms;
         this.section = sectionNumber;
         this.totalSections = 8;
@@ -88,18 +122,18 @@ class IAT{
 
     async run(){
 
-        section_name.innerHTML = "Current Section: " + "<strong>" + this.sectionPrompt + "</strong>";
-        question_section.innerHTML = "Section " + this.section + " of " + this.totalSections;
+        iatProcess.section_name.innerHTML = "Current Section: " + "<strong>" + this.sectionPrompt + "</strong>";
+        iatProcess.question_section.innerHTML = "Section " + this.section + " of " + this.totalSections;
 
         for (let i = 0; i < this.terms.length; i++){
             
-            question_word.innerHTML = this.terms[i];
+            iatProcess.question_word.innerHTML = this.terms[i];
 
             // Reset animation as new words are being displayed to the user            
-            question_word.classList.add("fade-in-iat-question");
+            iatProcess.question_word.classList.add("fade-in-iat-question");
 
             setTimeout(() => {
-                question_word.classList.remove("fade-in-iat-question");
+                iatProcess.question_word.classList.remove("fade-in-iat-question");
             }, 150);
             
             let start = Date.now(); // Get the current time
@@ -123,34 +157,43 @@ class IAT{
         let catImage = await this.getCatImage();
         
         // Hide the question section and show a break screen
-        iat_breather.classList.remove("content-gone");
-        iat_breather.classList.add("fadeInBreather");
+        iatProcess.breather.iat_breather.classList.remove("content-gone");
+        iatProcess.breather.iat_breather.classList.add("fadeInBreather");
 
-        iat_questions.classList.add("content-gone"); 
+        iatProcess.iat_questions.classList.add("content-gone"); 
         
-        iat_breather_img.src = catImage[0].url; // [0] is the promise result
-        iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
+        // Display the cat image and a message to the user
+        // We have a try/catch in case the cat api refuses our GET Request
+        try{
+            iatProcess.breather.iat_breather_img.src = catImage[0].url; // [0] is the promise result
+        }
+        catch (error){
+            console.log(error);
+        }
+        finally{
+            iatProcess.breather.iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
+        }
 
 
         const timer = setInterval(() => {
             this.timeCounter -= 1;
-            iat_breather_timer.innerHTML = "<strong>You're on break for " + this.timeCounter + " seconds!</strong>";
+            iatProcess.breather.iat_breather_timer.innerHTML = "<strong>You're on break for " + this.timeCounter + " seconds!</strong>";
         }, 1000)
 
         // Once a promise is returned, continue the IAT process (after 5 seconds)
         // Because of this, we do not need a continue button
         return new Promise((resolve) => { 
             setTimeout(() => {
-                iat_breather.classList.remove("fadeInBreather");
-                iat_breather.classList.add("content-gone");
+                iatProcess.breather.iat_breather.classList.remove("fadeInBreather");
+                iatProcess.breather.iat_breather.classList.add("content-gone");
 
-                iat_questions.classList.remove("content-gone");
+                iatProcess.iat_questions.classList.remove("content-gone");
 
                 // Stop the timer
                 clearInterval(timer);
 
                 this.timeCounter = 5; // reset class variable (all classes use the same instance value)
-                iat_breather_timer.innerHTML = "<strong>You're on break for " + "5" + " seconds!</strong>";
+                iatProcess.breather.iat_breather_timer.innerHTML = "<strong>You're on break for " + "5" + " seconds!</strong>";
 
                 // End the promise so the IAT process can continue
                 resolve();
@@ -166,7 +209,7 @@ class IAT{
             // Convert response.json() converts JSON to a JS object
             try{
                 let response = await fetch("https://api.thecatapi.com/v1/images/search?larryfoundcatapi");
-                result = await response.json(); 
+                result = await response.json();                
             }
             catch (err){
                 console.log(err);
@@ -184,57 +227,46 @@ class IAT{
 function beginInstructions(){
     let survey = document.getElementsByClassName("user-survey")[0];
 
-    /*  Allow the user to see the introduction a little better 
-        By default the text is smaller to fit the second page better */
-    instructionsText.style.fontSize = "2.75vh";
-
-    let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
-    let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
-
     if (userData.relationship === "Student"){
         let gradeLevel;
         (userData.grade === 3) ? gradeLevel = "rd" : gradeLevel = "th";
 
-        welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
+        instructions.instructionsText.welcome.innerHTML = "Welcome, " + userData.grade + gradeLevel + " grader!";
+    }
+    else{
+        instructions.instructionsText.welcome.innerHTML = "Welcome, " + userData.relationship + "!";
     }
 
-    acknowledgement.innerHTML = "The survey you are about to complete will not collect any personal information and all answers will be anonymous.";
+    instructions.instructionsText.acknowledgement.innerHTML = "The survey you are about to complete will not collect any personal information and all answers will be anonymous.";
     
     survey.classList.add("content-gone");
-    instructions.classList.remove("content-gone");
+    instructions.instructionsClass.classList.remove("content-gone");
 
 }
 
 // Remove the welcome and acknowedgement text and reveal how to use the IAT
 function continueInstructions(){
+
+    // Hide the welcome and acknowledgement text
+    instructions.instructionsText.welcome.classList.add("content-gone");
+    instructions.instructionsText.acknowledgement.classList.add("content-gone");
+    iatProcess.iat_agreement.classList.add("content-gone");
+
+    // Show the instructions
+    instructions.instructionsText.info.classList.remove("content-gone");
+    instructions.instructionsText.info.innerHTML = "In the following test, you will be asked to <span class=\"underline\">sort words with each other</span> with the following keys:<br><span class=\"hotkeys-info\">[I] = Included Yes, [E] = Excluded No</span>";
     
-    instructionsText.style.fontSize = "2.25vh";
+    instructions.instructionsText.example.classList.remove("content-gone");
+    
+    // Give teacher instructions if the user is a teacher
+    if (userData.relationship === "Teacher"){
+        instructions.instructionsText.example.innerHTML = "<span class=\"bold\">For Example:</span><br><br>The category is <span class=\"bold\">Positive Words</span>. When the word \"Studious\" appears, you press <span class=\"hotkeys-info\">[I]</span> because \"Studious\" is a <span class=\"bold\">Positive Word</span><br><br>The category is <span class=\"bold\">Negative Words</span>. When the word \"Lazy\" appears, you press <span class=\"hotkeys-info\">[E]</span> because \"Lazy\" is a <span class=\"bold\">Negative Word</span>";
+    }
 
-    let welcome = document.getElementsByClassName("instructions-welcome-text")[0];
-    let acknowledgement = document.getElementsByClassName("instructions-acknowledgement-text")[0];
-
-    let info = document.getElementsByClassName("instructions-info-text")[0];
-    let example = document.getElementsByClassName("instructions-example-text content-gone")[0];
-
-    let keywords = document.getElementsByClassName("instructions-keywords")[0];
-    let start = document.getElementsByClassName("instructions-start-text")[0];
-
-    // Left choice and right choice buttons
-    let left_choice_start = document.getElementsByClassName("left-choice")[0];
-    let right_choice_start = document.getElementsByClassName("right-choice")[0];
-
-    welcome.classList.add("content-gone");
-    acknowledgement.classList.add("content-gone");
-    iat_agreement.classList.add("content-gone");
-
-    info.classList.remove("content-gone");
-    example.classList.remove("content-gone");
-
-    keywords.classList.remove("content-gone");
-    start.classList.remove("content-gone");
-
-    left_choice_start.classList.add("fadeInStartIAT");
-    right_choice_start.classList.add("fadeInStartIAT");
+    instructions.instructionsText.keywords.classList.remove("content-gone");
+    
+    
+    instructions.start.classList.remove("content-gone");
 }
 
 // Fisher-Yates Shuffle: https://bost.ocks.org/mike/shuffle/
@@ -282,60 +314,61 @@ function choiceSelected() {
 // We want the terms to be jumbled up together randomly so we use randomArray() function 
 async function startTest(){
     // Start the IAT process
-    iat_questions.classList.remove("content-gone");
-    instructions.classList.add("content-gone");
+    iatProcess.iat_questions.classList.remove("content-gone");
+    instructions.instructionsClass.classList.add("content-gone");
+
+    // Left choice and right choice buttons for the iatProcess
+    let leftChoice = document.getElementsByClassName("left-choice")[0];
+    let rightChoice = document.getElementsByClassName("right-choice")[0];
+
+    leftChoice.classList.add("fadeInStartIAT");
+    rightChoice.classList.add("fadeInStartIAT");
 
     // Set terms based on whether the user is a student or a teacher
     let positiveTerms;
     let negativeTerms;
-    let studentTerms;
-    let themTerms;
 
     if (userData.relationship === "Student"){
         positiveTerms = ["Joyful", "Happy", "Content", "Cheerful"];
         negativeTerms = ["Miserable", "Sad", "Gloomy", "Depressed"];
-        studentTerms  = ["Me", "Self", "I", "My"];
-        themTerms     = ["Them", "Other", "Him", "Her"];
     }
     else if (userData.relationship === "Teacher"){
         positiveTerms = ["Motivated", "Studious", "Competent", "Collaborative"];
         negativeTerms = ["Disruptive", "Lazy", "Cheaters", "Irresponsible"];
-        studentTerms  = ["Pupil", "Learner"];
-        themTerms     = ["Them", "Other"];
     }
 
     // Group all terms together and shuffle later
-    let termGroups = [positiveTerms, negativeTerms, studentTerms, themTerms].flat();
+    let termGroups = [positiveTerms, negativeTerms].flat();
 
-    const iatOne = new IAT('Student or Positive', 1, shuffleArray(termGroups));
+    const iatOne = new IAT('Positive Words', 1, shuffleArray(termGroups));
     await iatOne.run();
     await iatOne.pause();
 
-    const iatTwo = new IAT('Student or Negative', 2, shuffleArray(termGroups));
+    const iatTwo = new IAT('Negative Words', 2, shuffleArray(termGroups));
     await iatTwo.run();
     await iatTwo.pause();
 
-    const iatThr = new IAT('Student or Positive', 3, shuffleArray(termGroups));
+    const iatThr = new IAT('Positive Words', 3, shuffleArray(termGroups));
     await iatThr.run();
     await iatThr.pause();
 
-    const iatFour = new IAT('Student or Negative', 4, shuffleArray(termGroups));
+    const iatFour = new IAT('Negative Words', 4, shuffleArray(termGroups));
     await iatFour.run();
     await iatFour.pause();
 
-    const iatFive = new IAT('Student or Positive', 5, shuffleArray(termGroups));
+    const iatFive = new IAT('Positive Words', 5, shuffleArray(termGroups));
     await iatFive.run();
     await iatFive.pause();
 
-    const iatSix = new IAT('Student or Negative', 6, shuffleArray(termGroups));
+    const iatSix = new IAT('Negative Words', 6, shuffleArray(termGroups));
     await iatSix.run();
     await iatSix.pause();
 
-    const iatSeven = new IAT('Student or Positive', 7, shuffleArray(termGroups));
+    const iatSeven = new IAT('Positive Words', 7, shuffleArray(termGroups));
     await iatSeven.run();
     await iatSeven.pause();
 
-    const iatEight = new IAT('Student or Negative', 8, shuffleArray(termGroups));
+    const iatEight = new IAT('Negative Words', 8, shuffleArray(termGroups));
     await iatEight.run();
 
     userData.data = iatList; // adding the IAT data to the userData object
@@ -349,9 +382,8 @@ async function endTest(){
 
     let iat_quote_container = document.getElementsByClassName("iat-finish-inspirational-quote-container")[0];
 
-    iat_questions.classList.add("content-gone");
+    iatProcess.iat_questions.classList.add("content-gone");
     iat_finish.classList.remove("content-gone");
-
     iat_finish.classList.add("fadeIn");
 
     // Get a random quote from the list of quotes (no-cors mode is used in the GET Request to bypass CORS)
@@ -368,9 +400,12 @@ async function endTest(){
     catch(err){
         console.log(err);
     }
+    finally{
+        // Send the data to the server
+        postRequestData();
 
-    // Send the data to the server
-    postRequestData();
+        console.log("Hang on tight. Sending POST Request to server...");
+    }
 
     // Offically close the startTest() function
     return new Promise((resolve) => { resolve(); });
@@ -400,7 +435,7 @@ let metInstructions = false;
 let startedTest = false;
 let agreeTerms = false;
 
-rootElement.addEventListener("keyup", (keyboardEvent) => {
+body.rootElement.addEventListener("keyup", (keyboardEvent) => {
 
     // Check if the user has completed the user survey (all surveys have a relationship property)
     (userData.hasOwnProperty("relationship"))? metInstructions = true : metInstructions = false;
@@ -423,10 +458,4 @@ rootElement.addEventListener("keyup", (keyboardEvent) => {
             startedTest = true;
         }
     }
-
-    // the choiceSelected() function is only useful if the IAT class is awaiting for a response
-    // // this means the user can press the keys during the break period and it won't do anything undesirable
-    // if (keyboardEvent.key === "e" || keyboardEvent.key === "i"){
-    //     choiceSelected();
-    // }
 })
