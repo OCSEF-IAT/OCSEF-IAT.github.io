@@ -318,7 +318,7 @@ body{
     transition: 250ms ease;
 }
 
-.user-survey-grade-selector-clicked, .user-survey-classes-selector-clicked, .user-survey-teacher-grade-selector-clicked, .user-survey-teacher-class-selector-clicked{
+.user-survey-selector-clicked{
     background: var(--primary-color);
     color: white !important;
 }

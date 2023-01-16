@@ -36,7 +36,7 @@ const iatProcess = {
     // IAT Breather Section
     breather: {
         iat_breather: document.getElementsByClassName("iat-breather")[0],
-        iat_breather_img: document.getElementsByClassName("iat-breather-image")[0],
+        iat_breather_img: document.getElementById("iat-breather-image"),
         iat_breather_message: document.getElementsByClassName("iat-breather-message")[0],
         iat_breather_timer: document.getElementsByClassName("iat-breather-timer")[0]
     },
@@ -64,11 +64,11 @@ function storeSurveyData(){
     const _classOptions = document.getElementsByClassName("user-survey-classes-option");
 
     // Check if the user is a teacher or student
-    (_teacher.classList.contains("user-survey-relationship-selector-clicked")) ? userData.relationship = "Teacher" : userData.relationship = "Student";
+    (_teacher.classList.contains("user-survey-selector-clicked")) ? userData.relationship = "Teacher" : userData.relationship = "Student";
 
     // Get the index for the grade and class choice that the student clicks 
     for (let option = 0; option < _gradeOptions.length; option += 1){
-        if (_gradeOptions[option].classList.contains("user-survey-grade-selector-clicked")){
+        if (_gradeOptions[option].classList.contains("user-survey-selector-clicked")){
 
             // Add the grade to the userData object
             userData.grade = parseInt(_gradeOptions[option].innerHTML);
@@ -76,7 +76,7 @@ function storeSurveyData(){
     }
 
     for (let option = 0; option < _classOptions.length; option += 1){
-        if (_classOptions[option].classList.contains("user-survey-classes-selector-clicked")){
+        if (_classOptions[option].classList.contains("user-survey-selector-clicked")){
 
             // Add the class to the userData object
             userData.classesAdvanced = parseInt(_classOptions[option].innerHTML);
@@ -149,6 +149,7 @@ class IAT{
         iatProcess.iat_questions.classList.add("content-gone"); 
         
         iatProcess.breather.iat_breather_img.src = catImage[0].url; // [0] is the promise result
+
         iatProcess.breather.iat_breather_message.innerHTML = "You have completed section <strong>" + this.section + " of " + this.totalSections + "</strong>. Take a small breather!";
 
 
@@ -186,7 +187,7 @@ class IAT{
             // Convert response.json() converts JSON to a JS object
             try{
                 let response = await fetch("https://api.thecatapi.com/v1/images/search?larryfoundcatapi");
-                result = await response.json(); 
+                result = await response.json();                
             }
             catch (err){
                 console.log(err);
@@ -392,7 +393,7 @@ async function postRequestData(){
         },
         body: JSON.stringify(userData)
     });
-    console.log(response.json()); // Get response from server and convert to JS Object
+    console.log(response.json().message); // Get response from server and convert to JS Object
 }
 
 // MAINSETUP =========================================================================================================================

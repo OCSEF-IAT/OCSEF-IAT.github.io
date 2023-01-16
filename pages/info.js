@@ -1,55 +1,44 @@
-// VARIABLES =========================================================================================================================
+// VARIABLES ========================================================================================================================
 
-const userSurvey = document.getElementsByClassName("user-survey")[0];
+const userSurvey = {
+    clickEffect: "user-survey-selector-clicked",
 
-// Student or Teacher
-const teacher = document.getElementById("user-survey-relationship-teacher");
-const student = document.getElementById("user-survey-relationship-student");
+    // teacher DOM Elements/Questions
+    teacher: {
+        teacherButton: document.getElementById("user-survey-relationship-teacher"),
+        
+        gradeOptions: document.getElementsByClassName("user-survey-teacher-grade-option"),
+        classOptions: document.getElementsByClassName("user-survey-teacher-class-option"),
+        
+        gradesContainer: document.getElementsByClassName("user-survey-teacher-grade")[0],
+        classesContainer: document.getElementsByClassName("user-survey-teacher-class")[0]
+    },
 
-// Teacher Questions
-const teacherGradeOptions = document.getElementsByClassName("user-survey-teachergrade-option");
-const teacherClassOptions = document.getElementsByClassName("user-survey-teacherclass-option");
-const teacherGradesContainer = document.getElementsByClassName("user-survey-grade-teacher")[0];
-const teacherClassesContainer = document.getElementsByClassName("user-survey-classes-teacher")[0];
+    // student DOM Elements/Questions
+    student: {
+        studentButton: document.getElementById("user-survey-relationship-student"),
 
-// Student Questions
-const gradeOptions = document.getElementsByClassName("user-survey-grade-option");
-const classOptions = document.getElementsByClassName("user-survey-classes-option");
-const gradesContainer = document.getElementsByClassName("user-survey-grade")[0];
-const classesContainer = document.getElementsByClassName("user-survey-classes")[0];
+        gradeOptions: document.getElementsByClassName("user-survey-grade-option"),
+        classOptions: document.getElementsByClassName("user-survey-classes-option"),
 
-// Submission
+        gradesContainer: document.getElementsByClassName("user-survey-grade")[0],
+        classesContainer: document.getElementsByClassName("user-survey-classes")[0]
+    }
+}
+
+// DOM element information from the userSurvey object
+const teacherInfo = userSurvey.teacher;
+const studentInfo = userSurvey.student;
+
 const submission = document.getElementsByClassName("user-survey-submission")[0];
 
-// FUNCTIONS =========================================================================================================================
-
-// Reset choices so that none is clicked (if needed)
-function resetClick(options, click){
-    for (let i = 0; i < options.length; i += 1){
-        options[i].classList.remove(click);
-    }
+// Enum for animation function
+const animationOptions = {
+    add: "add",
+    remove: "remove"
 }
 
-// Give survey options the ability to click
-function setClick(option, options, click){
-    resetClick(options, click);
-
-    // Give the clicked choice the pressed down styling
-    option.classList.add(click);
-}
-
-function animate(surveyContainer, add_or_remove){
-
-    if (add_or_remove === true){
-        surveyContainer.classList.remove("content-gone");
-        surveyContainer.classList.remove("fadeOut");
-        surveyContainer.classList.add("fadeIn");
-    }
-    else if (add_or_remove === false){
-        surveyContainer.classList.remove("fadeIn");
-        surveyContainer.classList.add("fadeOut");
-    }
-}
+// CONFIGURE CLASS ===================================================================================================================
 
 // Configure the grade choices
 class configure{
@@ -75,18 +64,17 @@ class configure{
     createEventListeners(){
         
         for (let option = 0; option < this.options_length; option += 1){
-
             this.options[option].addEventListener("click", () => {
                 
                 // Check if the grade is greater than six, if so, then ask if they are in
                 // or teach honors/AP classes
-                let gradeValue = gradeOptions[option].innerHTML;
+                let gradeValue = this.options[option].innerHTML;
 
                 // Prevent spamming animation 
                 if (this.debounce === true){
-                    gradeOptions[option].style.cursor = "wait";
+                    this.options[option].style.cursor = "wait";
         
-                    setTimeout(() => { gradeOptions[option].style.cursor = "pointer"; return; }, 500);
+                    setTimeout(() => { this.options[option].style.cursor = "pointer"; return; }, 500);
                 }
                 this.debounce = true;
 
@@ -94,26 +82,32 @@ class configure{
                 setClick(this.options[option], this.options, this.click);
 
                 if (gradeValue >= 6){
-                    animate(this.subsequentQuestionParent, true);
+                    animate(this.subsequentQuestionParent, animationOptions.add);
         
+                    // Hide submission to reveal subsequent question                    
                     submission.classList.add("content-gone");
-                    submission.classList.remove("fadeIn");
-        
+
                     // Allow selection after the animation ends
                     setTimeout(() => {
                         this.debounce = false;
                     }, 500);
                 }
                 else{
-                    animate(this.subsequentQuestionParent, false);
-                    animate(submission, true);
-        
-                    if (this.subsequentQuestionParent !== null){
-                        resetClick(this.subsequentQuestionParent, this.click);
-                    }
+
+                    // Do not hide submission button and have no subsequent question
+                    this.subsequentQuestionParent.classList.add("fadeOut");
+                    resetClick(this.subsequentQuestion, "user-survey-selector-clicked");
+
+                    setTimeout(() => {
+                        this.subsequentQuestionParent.classList.add("content-gone");
+                        this.subsequentQuestionParent.classList.remove("fadeOut");
+                    }, 500);
+
+
+                    animate(submission, animationOptions.add);
         
                     setTimeout(() => {
-                        classesContainer.classList.add("content-gone");
+                        this.subsequentQuestionParent.classList.add("content-gone");
                         this.debounce = false;
                     }, 500);
                 }
@@ -137,113 +131,131 @@ class configure{
 
 // CONFIGURATION =========================================================================================================================
 
-let m_student = new configure(gradeOptions, gradeOptions.length, gradesContainer, "user-survey-grade-selector-clicked", classOptions, classesContainer);
-m_student.createEventListeners();
+let m_teacher = new configure(
+    teacherInfo.gradeOptions, 
+    teacherInfo.gradeOptions.length, 
+    teacherInfo.gradesContainer, 
+    userSurvey.clickEffect, 
+    teacherInfo.classOptions, 
+    teacherInfo.classesContainer
+);
 
-let m_teacher = new configure(teacherGradeOptions, teacherGradeOptions.length, teacherGradesContainer, "user-survey-grade-selector-clicked", teacherClassOptions, teacherClassesContainer);
+let m_student = new configure(
+    studentInfo.gradeOptions, 
+    studentInfo.gradeOptions.length, 
+    studentInfo.gradesContainer, 
+    userSurvey.clickEffect, 
+    studentInfo.classOptions, 
+    studentInfo.classesContainer
+);
+
+// Create event listeners for the user survey options
 m_teacher.createEventListeners();
-
-// let debounce = false;
-// for (let option = 0; option < gradeOptions.length; option += 1){
-
-//     // Gradeoptions event listeners
-//     gradeOptions[option].addEventListener("click", () => {
-        
-//         // Check if the grade is greater than six, if so, then ask if they are in
-//         // honors or AP classes
-//         let gradeValue = gradeOptions[option].innerHTML;
-        
-//         if (debounce === true){
-//             gradeOptions[option].style.cursor = "wait";
-
-//             setTimeout(() => { gradeOptions[option].style.cursor = "pointer"; return; }, 500);
-//         }
-//         debounce = true;
-
-//         // Add the clicked styling to the choice
-//         setClick(gradeOptions[option], gradeOptions, "user-survey-grade-selector-clicked");
-
-//         if (gradeValue >= 6){
-//             animate(classesContainer, true);
-
-//             submission.classList.add("content-gone");
-//             submission.classList.remove("fadeIn");
-
-//             // Allow selection after the animation ends
-//             setTimeout(() => {
-//                 debounce = false;
-//             }, 500);
-//         }
-//         else{
-//             animate(classesContainer, false);
-//             animate(submission, true);
-
-//             resetClick(classOptions, "user-survey-classes-selector-clicked");
-
-//             setTimeout(() => {
-//                 classesContainer.classList.add("content-gone");
-//                 debounce = false;
-//             }, 500);
-//         }
-//     });
-// }
-
-// // configure the class choices
-// for (let j = 0; j < classOptions.length; j += 1){
-//     classOptions[j].addEventListener("click", () => {
-        
-//         setClick(classOptions[j], classOptions, "user-survey-classes-selector-clicked");
-
-//         // Reveal Submission button
-//         submission.classList.remove("content-gone");
-//         submission.classList.add("fadeIn");
-//     });
-// }
+m_student.createEventListeners();
 
 // MAINSETUP =========================================================================================================================
 
 let teacherClicked = false;
 let studentClicked = false;
 
-// Add teacher questions appearing =================================
-teacher.addEventListener("click", () => {
+teacherInfo.teacherButton.addEventListener("click", () => {
 
     if (teacherClicked === true) return; 
 
     teacherClicked = true;
     studentClicked = false;
 
-    teacher.classList.add("user-survey-relationship-selector-clicked");
-    student.classList.remove("user-survey-relationship-selector-clicked");
+    initialClick(teacherInfo.teacherButton);
 
-    gradesContainer.classList.add("content-gone");
-    classesContainer.classList.add("content-gone");
+    // Hide student survey questions
+    studentInfo.gradesContainer.classList.add("content-gone");
+    studentInfo.classesContainer.classList.add("content-gone");
 
     // Reset choices for student if the teacher is clicked 
-    resetClick(gradeOptions, "user-survey-grade-selector-clicked");
-    resetClick(classOptions, "user-survey-classes-selector-clicked");
+    resetClick(studentInfo.gradeOptions, "user-survey-selector-clicked");
+    resetClick(studentInfo.classOptions, "user-survey-selector-clicked");
 
-    submission.classList.remove("content-gone");
-    submission.classList.add("fadeIn");
+    // Remove submission 
+    submission.classList.add("content-gone");
 
-    setTimeout(() => {
-        submission.classList.remove("fadeIn");
-    }, 500);
+    animate(teacherInfo.gradesContainer, animationOptions.add);
 });
 
-student.addEventListener("click", () => {
+studentInfo.studentButton.addEventListener("click", () => {
 
     if (studentClicked === true) return;
 
     studentClicked = true;
     teacherClicked = false;
 
-    student.classList.add("user-survey-relationship-selector-clicked");
-    teacher.classList.remove("user-survey-relationship-selector-clicked");
+    // Button click styling
+    initialClick(studentInfo.studentButton);
 
+    // Hide teacher survey questions
+    teacherInfo.gradesContainer.classList.add("content-gone");
+    teacherInfo.classesContainer.classList.add("content-gone");
+
+    // Reset choices for teacher if the student is clicked 
+    resetClick(teacherInfo.gradeOptions, "user-survey-selector-clicked");
+    resetClick(teacherInfo.classOptions, "user-survey-selector-clicked");
+
+
+    // Remove submission 
     submission.classList.add("content-gone");
-
-    gradesContainer.classList.remove("content-gone");
-    gradesContainer.classList.add("fadeIn");
+    
+    animate(studentInfo.gradesContainer, animationOptions.add);
 });
 
+// HELPER FUNCTIONS =========================================================================================================================
+
+// Reset choices so that none is clicked (if needed)
+function resetClick(options, click){
+    for (let i = 0; i < options.length; i += 1){
+        options[i].classList.remove(click);
+    }
+}
+
+// Give survey options the ability to click
+function setClick(option, options, click){
+    resetClick(options, click);
+
+    // Give the clicked choice the pressed down styling
+    option.classList.add(click);
+}
+
+// Initial Student or Teacher click:
+// relationshipType = student or teacher DOM element 
+const initialClick = (relationshipType) => {
+    
+    teacherInfo.teacherButton.classList.remove("user-survey-selector-clicked");
+    studentInfo.studentButton.classList.remove("user-survey-selector-clicked");
+
+    relationshipType.classList.add("user-survey-selector-clicked");
+}
+
+// Add or remove animations
+// surveyContainer = DOM element to be animated
+// status = add or remove
+function animate(surveyContainer, status){
+
+    if (status === "add"){
+        surveyContainer.classList.remove("content-gone");
+        surveyContainer.classList.remove("fadeOut");
+
+        surveyContainer.classList.add("fadeIn");
+
+        setTimeout(() => {
+            surveyContainer.classList.remove("fadeIn");
+        }, 500);
+    }
+
+    else if (status == "remove"){
+        surveyContainer.classList.remove("fadeIn");
+        surveyContainer.classList.add("fadeOut");
+
+        setTimeout(() => {
+            surveyContainer.classList.add("content-gone");
+            surveyContainer.classList.remove("fadeOut");
+        }, 500);
+    }
+}
