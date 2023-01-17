@@ -83,7 +83,8 @@ class configure{
 
                 if (gradeValue >= 6){
                     animate(this.subsequentQuestionParent, animationOptions.add);
-        
+                    resetClick(this.subsequentQuestion, "user-survey-selector-clicked");
+                    
                     // Hide submission to reveal subsequent question                    
                     submission.classList.add("content-gone");
 
