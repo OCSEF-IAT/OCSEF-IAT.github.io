@@ -385,10 +385,16 @@ async function endTest(){
     iat_finish.classList.remove("content-gone");
     iat_finish.classList.add("fadeIn");
 
+    iat_quote.innerHTML = "Hang on tight, we're just doing some super cool calculations...";
+    iat_qoute_author.innerHTML = "- Please Do Not Close This Tab Yet";
+
     // Get a random quote from the list of quotes (no-cors mode is used in the GET Request to bypass CORS)
     try{
         let getQuote = await fetch("https://api.quotable.io/random");
         let quote = await getQuote.json();
+
+        console.log("Hang on tight. Sending POST Request to server...");
+        await postRequestData();
 
         // Display the quote for the user to see
         iat_quote.innerHTML = `"${quote.content}"`;
@@ -398,12 +404,6 @@ async function endTest(){
     }
     catch(err){
         console.log(err);
-    }
-    finally{
-        // Send the data to the server
-        postRequestData();
-
-        console.log("Hang on tight. Sending POST Request to server...");
     }
 
     // Offically close the startTest() function
@@ -423,6 +423,8 @@ async function postRequestData(){
         body: JSON.stringify(userData)
     });
     console.log(response.json()); // Get response from server and convert to JS Object
+
+    return new Promise((resolve) => { resolve(); });
 }
 
 // MAINSETUP =========================================================================================================================
