@@ -261,7 +261,7 @@ function continueInstructions(){
     // Give teacher instructions if the user is a teacher
     if (userData.relationship === "Teacher"){
         instructions.instructionsText.example.innerHTML = "<span class=\"bold\">For Example:</span><br><br>The category is <span class=\"bold\">Positive Words</span>. When the word \"Studious\" appears, you press <span class=\"hotkeys-info\">[I]</span> because \"Studious\" is a <span class=\"bold\">Positive Word</span><br><br>The category is <span class=\"bold\">Negative Words</span>. When the word \"Lazy\" appears, you press <span class=\"hotkeys-info\">[E]</span> because \"Lazy\" is a <span class=\"bold\">Negative Word</span>";
-        instructions.instructionsText.keywords.innerHTML = "<span class=\"bold\">Key Words:</span><ul><li><span class=\"underline\">Positive Words</span>: Motivated, Studious, Competent, Collaborative</li><li><span class=\"underline\">Negative Words</span>: Miserable, Sad, Gloomy, Depressed</li</ul>";
+        instructions.instructionsText.keywords.innerHTML = "<span class=\"bold\">Key Words:</span><ul><li><span class=\"underline\">Positive Words</span>: Motivated, Studious, Competent, Collaborative</li><li><span class=\"underline\">Negative Words</span>: Disruptive, Lazy, Cheaters, Irresponsible</li</ul>";
     }
     
     instructions.instructionsText.keywords.classList.remove("content-gone");
